@@ -1,0 +1,963 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CAC Staff Racing 2026</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;900&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --navy:    #0a1628;
+      --navy2:   #112240;
+      --blue:    #1a4b8c;
+      --blue2:   #2563b0;
+      --sky:     #3b9de8;
+      --accent:  #f0a500;
+      --white:   #f8fafc;
+      --muted:   #94a3b8;
+      --surface: #162035;
+      --border:  rgba(255,255,255,0.08);
+      --text-body: #cbd5e1;
+      --nav-bg:       rgba(10,22,40,0.95);
+      --hero-wave:    #0a1628;
+      --card-header:  rgba(255,255,255,0.04);
+      --row-hover:    rgba(255,255,255,0.03);
+      --row-alt:      rgba(255,255,255,0.02);
+      --chip-bg:      rgba(255,255,255,0.07);
+      --tbc-bg:       rgba(255,255,255,0.05);
+      --badge-bg:     rgba(255,255,255,0.07);
+      --si-th-bg:     rgba(255,255,255,0.06);
+      --font-display: 'Barlow Condensed', sans-serif;
+      --font-body:    'Barlow', sans-serif;
+    }
+
+
+    @media (prefers-color-scheme: light) {
+      :root:not([data-theme="dark"]) {
+        --navy:    #e8f0fb;
+        --navy2:   #d4e4f7;
+        --blue:    #b8d4f0;
+        --blue2:   #1a6bbf;
+        --sky:     #1558a8;
+        --accent:  #c47d00;
+        --white:   #1a2b3c;
+        --muted:   #4a6278;
+        --surface: #f0f6ff;
+        --border:  rgba(0,0,0,0.1);
+        --text-body: #2d4a63;
+        --nav-bg:       rgba(240,248,255,0.97);
+        --hero-wave:    #e8f0fb;
+        --card-header:  rgba(0,0,0,0.04);
+        --row-hover:    rgba(0,0,0,0.03);
+        --row-alt:      rgba(0,0,0,0.02);
+        --chip-bg:      rgba(0,0,0,0.07);
+        --tbc-bg:       rgba(0,0,0,0.06);
+        --badge-bg:     rgba(0,0,0,0.07);
+        --si-th-bg:     rgba(0,0,0,0.05);
+      }
+    }
+
+    [data-theme="light"] {
+      --navy:    #e8f0fb;
+      --navy2:   #d4e4f7;
+      --blue:    #b8d4f0;
+      --blue2:   #1a6bbf;
+      --sky:     #1558a8;
+      --accent:  #c47d00;
+      --white:   #1a2b3c;
+      --muted:   #4a6278;
+      --surface: #f0f6ff;
+      --border:  rgba(0,0,0,0.1);
+      --text-body: #2d4a63;
+      --nav-bg:       rgba(240,248,255,0.97);
+      --hero-wave:    #e8f0fb;
+      --card-header:  rgba(0,0,0,0.04);
+      --row-hover:    rgba(0,0,0,0.03);
+      --row-alt:      rgba(0,0,0,0.02);
+      --chip-bg:      rgba(0,0,0,0.07);
+      --tbc-bg:       rgba(0,0,0,0.06);
+      --badge-bg:     rgba(0,0,0,0.07);
+      --si-th-bg:     rgba(0,0,0,0.05);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--navy);
+      color: var(--white);
+      font-family: var(--font-body);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── NAV ─────────────────────────────────────────── */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: var(--nav-bg);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 1.5rem;
+      display: flex; align-items: center;
+      height: 56px; gap: 0;
+    }
+    .nav-brand {
+      font-family: var(--font-display);
+      font-weight: 900; font-size: 1.15rem;
+      letter-spacing: 0.05em; color: var(--white);
+      text-transform: uppercase; margin-right: auto;
+      cursor: pointer; white-space: nowrap;
+    }
+    .nav-brand span { color: var(--accent); }
+    .nav-links {
+      display: flex; gap: 0; list-style: none;
+      overflow-x: auto; -webkit-overflow-scrolling: touch;
+    }
+    .nav-links li a {
+      display: block; padding: 0 0.9rem; height: 56px;
+      line-height: 56px; font-size: 0.78rem; font-weight: 600;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--muted); text-decoration: none;
+      border-bottom: 2px solid transparent;
+      transition: color 0.2s, border-color 0.2s;
+      white-space: nowrap;
+    }
+    .nav-links li a:hover,
+    .nav-links li a.active {
+      color: var(--white);
+      border-bottom-color: var(--accent);
+    }
+
+    /* ── PAGES ───────────────────────────────────────── */
+    .page { display: none; }
+    .page.active { display: block; }
+
+    /* ── HERO ────────────────────────────────────────── */
+    .hero {
+      position: relative; overflow: hidden;
+      background: linear-gradient(135deg, var(--navy) 0%, var(--navy2) 40%, var(--blue) 100%);
+      padding: 4rem 1.5rem 3rem;
+      text-align: center;
+    }
+    .hero::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: repeating-linear-gradient(
+        -55deg,
+        transparent, transparent 40px,
+        rgba(255,255,255,0.018) 40px, rgba(255,255,255,0.018) 41px
+      );
+      pointer-events: none;
+    }
+    .hero-wave {
+      position: absolute; bottom: -1px; left: 0; right: 0;
+    }
+    .hero-eyebrow {
+      font-family: var(--font-display);
+      font-size: 0.85rem; font-weight: 600;
+      letter-spacing: 0.25em; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 0.75rem;
+    }
+    .hero-title {
+      font-family: var(--font-display);
+      font-size: clamp(2.8rem, 8vw, 5.5rem);
+      font-weight: 900; line-height: 0.95;
+      letter-spacing: -0.01em; text-transform: uppercase;
+      margin-bottom: 1rem;
+    }
+    .hero-title .line2 { color: var(--sky); }
+    .hero-sub {
+      font-size: 1rem; color: var(--muted);
+      max-width: 480px; margin: 0 auto 2rem;
+      line-height: 1.6;
+    }
+    .hero-badges {
+      display: flex; gap: 0.75rem;
+      justify-content: center; flex-wrap: wrap;
+    }
+    .badge {
+      background: var(--badge-bg);
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      padding: 0.35rem 1rem;
+      font-size: 0.78rem; font-weight: 600;
+      letter-spacing: 0.06em; color: var(--muted);
+    }
+    .badge.accent { background: var(--accent); color: var(--navy); border-color: var(--accent); }
+
+    /* ── SECTION ─────────────────────────────────────── */
+    .section { padding: 2rem 1.5rem; max-width: 900px; margin: 0 auto; }
+    .section-title {
+      font-family: var(--font-display);
+      font-size: 1.5rem; font-weight: 900;
+      letter-spacing: 0.05em; text-transform: uppercase;
+      margin-bottom: 1.25rem;
+      display: flex; align-items: center; gap: 0.75rem;
+    }
+    .section-title::after {
+      content: ''; flex: 1; height: 1px;
+      background: var(--border);
+    }
+
+    /* ── CARDS ───────────────────────────────────────── */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px; overflow: hidden;
+      margin-bottom: 1rem;
+    }
+    .card-header {
+      padding: 0.85rem 1.25rem;
+      background: var(--card-header);
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .card-header-title {
+      font-family: var(--font-display);
+      font-size: 1rem; font-weight: 700;
+      letter-spacing: 0.06em; text-transform: uppercase;
+    }
+    .card-body { padding: 1.25rem; }
+
+    /* ── RESULTS TABLE ───────────────────────────────── */
+    .results-table {
+      width: 100%; border-collapse: collapse;
+      font-size: 0.88rem;
+    }
+    .results-table th {
+      text-align: left; padding: 0.5rem 0.75rem;
+      font-family: var(--font-display);
+      font-size: 0.75rem; font-weight: 700;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--muted); border-bottom: 1px solid var(--border);
+    }
+    .results-table td {
+      padding: 0.65rem 0.75rem;
+      border-bottom: 1px solid var(--border);
+      vertical-align: middle;
+    }
+    .results-table tr:last-child td { border-bottom: none; }
+    .results-table tr:hover td { background: var(--row-hover); }
+    .pos-badge {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 28px; height: 28px; border-radius: 50%;
+      font-family: var(--font-display); font-weight: 900; font-size: 0.9rem;
+      background: var(--chip-bg);
+    }
+    .pos-badge.gold   { background: var(--accent); color: var(--navy); }
+    .pos-badge.silver { background: #94a3b8; color: var(--navy); }
+    .pos-badge.bronze { background: #b45309; color: white; }
+    .discarded { opacity: 0.4; text-decoration: line-through; }
+    .score-chip {
+      display: inline-block; padding: 0.15rem 0.5rem;
+      border-radius: 4px; font-size: 0.8rem; font-weight: 600;
+      background: var(--chip-bg);
+    }
+    .score-chip.nett { background: rgba(59,157,232,0.2); color: var(--sky); }
+
+    /* ── DATES LIST ──────────────────────────────────── */
+    .dates-list { list-style: none; }
+    .dates-list li {
+      display: flex; align-items: center; gap: 0.75rem;
+      padding: 0.85rem 0;
+      border-bottom: 1px solid var(--border);
+      flex-wrap: wrap;
+    }
+    .dates-list li:last-child { border-bottom: none; }
+    .date-label {
+      font-family: var(--font-display);
+      font-weight: 700; font-size: 0.95rem;
+      min-width: 140px; color: var(--white);
+    }
+    .date-label .series-tag {
+      font-size: 0.7rem; font-weight: 600;
+      letter-spacing: 0.08em; color: var(--muted);
+      display: block; margin-top: 0.1rem;
+    }
+    .date-links { display: flex; gap: 0.5rem; margin-left: auto; flex-wrap: wrap; }
+    .pill-btn {
+      padding: 0.3rem 0.85rem; border-radius: 100px;
+      font-size: 0.75rem; font-weight: 700;
+      letter-spacing: 0.06em; text-transform: uppercase;
+      text-decoration: none; cursor: pointer; border: none;
+      transition: all 0.15s;
+    }
+    .pill-btn.results { background: var(--blue2); color: white; }
+    .pill-btn.results:hover { background: var(--sky); }
+    .pill-btn.media { background: rgba(240,165,0,0.15); color: var(--accent); border: 1px solid rgba(240,165,0,0.3); }
+    .pill-btn.media:hover { background: var(--accent); color: var(--navy); }
+    .pill-btn.tbc { background: var(--tbc-bg); color: var(--muted); cursor: default; }
+    .special-tag {
+      font-size: 0.7rem; font-weight: 700; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--accent);
+      background: rgba(240,165,0,0.1); border: 1px solid rgba(240,165,0,0.25);
+      padding: 0.15rem 0.5rem; border-radius: 4px;
+    }
+
+    /* ── TABS ────────────────────────────────────────── */
+    .tabs { border-bottom: 1px solid var(--border); margin-bottom: 1.5rem; display: flex; gap: 0; overflow-x: auto; }
+    .tab-btn {
+      background: none; border: none; cursor: pointer;
+      padding: 0.75rem 1.25rem;
+      font-family: var(--font-display); font-size: 0.85rem;
+      font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--muted); border-bottom: 2px solid transparent;
+      transition: all 0.15s; white-space: nowrap;
+    }
+    .tab-btn:hover { color: var(--white); }
+    .tab-btn.active { color: var(--sky); border-bottom-color: var(--sky); }
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    /* ── SI PAGE ─────────────────────────────────────── */
+    .si-content {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px; padding: 2rem;
+      line-height: 1.8; font-size: 0.92rem;
+    }
+    .si-content h2 {
+      font-family: var(--font-display); font-weight: 900;
+      font-size: 1.15rem; letter-spacing: 0.05em;
+      text-transform: uppercase; color: var(--sky);
+      margin: 1.75rem 0 0.5rem; padding-bottom: 0.4rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .si-content h3 {
+      font-family: var(--font-display); font-weight: 700;
+      font-size: 0.95rem; letter-spacing: 0.06em;
+      text-transform: uppercase; color: var(--muted);
+      margin: 1.25rem 0 0.4rem;
+    }
+    .si-content p { margin-bottom: 0.75rem; color: var(--text-body); }
+    .si-content ul { padding-left: 1.25rem; margin-bottom: 0.75rem; color: var(--text-body); }
+    .si-content li { margin-bottom: 0.35rem; }
+    .si-content table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: 0.85rem; }
+    .si-content th {
+      background: var(--si-th-bg); padding: 0.5rem 0.75rem;
+      text-align: left; font-family: var(--font-display);
+      font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted);
+      border: 1px solid var(--border);
+    }
+    .si-content td {
+      padding: 0.5rem 0.75rem; border: 1px solid var(--border); color: var(--text-body);
+    }
+    .si-content tr:nth-child(even) td { background: var(--row-alt); }
+    .download-btn {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      background: var(--accent); color: var(--navy);
+      padding: 0.65rem 1.5rem; border-radius: 8px;
+      font-weight: 700; font-size: 0.85rem; letter-spacing: 0.06em;
+      text-transform: uppercase; text-decoration: none;
+      margin-bottom: 1.5rem; transition: opacity 0.15s;
+    }
+    .download-btn:hover { opacity: 0.85; }
+
+    /* ── PLACEHOLDER ─────────────────────────────────── */
+    .placeholder {
+      text-align: center; padding: 3rem 1rem;
+      color: var(--muted);
+    }
+    .placeholder-icon { font-size: 2.5rem; margin-bottom: 0.75rem; opacity: 0.4; }
+    .placeholder p { font-size: 0.9rem; }
+
+    /* ── FOOTER ──────────────────────────────────────── */
+    footer {
+      margin-top: 4rem; padding: 2rem 1.5rem;
+      border-top: 1px solid var(--border);
+      text-align: center; color: var(--muted);
+      font-size: 0.8rem;
+    }
+
+    /* ── RESPONSIVE ──────────────────────────────────── */
+    @media (max-width: 600px) {
+      .nav-links li a { padding: 0 0.65rem; font-size: 0.72rem; }
+      .section { padding: 1.5rem 1rem; }
+      .results-table th:nth-child(n+5),
+      .results-table td:nth-child(n+5) { display: none; }
+    }
+
+    .theme-toggle {
+      background: none; border: 1px solid var(--border);
+      border-radius: 8px; width: 34px; height: 34px;
+      cursor: pointer; font-size: 16px;
+      display: flex; align-items: center; justify-content: center;
+      margin-right: 0.75rem; transition: border-color 0.2s;
+      flex-shrink: 0;
+    }
+    .theme-toggle:hover { border-color: var(--accent); }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-brand" onclick="showPage('home')">CAC <span>Racing</span></div>
+  <button class="theme-toggle" onclick="toggleTheme()" id="theme-btn" title="Toggle light/dark mode">🌙</button>
+  <ul class="nav-links">
+    <li><a href="#" onclick="showPage('home')" id="nav-home" class="active">Home</a></li>
+    <li><a href="#" onclick="showPage('results2026')" id="nav-results2026">2026 Results</a></li>
+    <li><a href="#" onclick="showPage('results2025')" id="nav-results2025">2025 Results</a></li>
+    <li><a href="#" onclick="showPage('dates')" id="nav-dates">Race Dates</a></li>
+    <li><a href="#" onclick="showPage('si')" id="nav-si">Sailing Instructions</a></li>
+  </ul>
+</nav>
+
+<!-- ══════════════════════════════════════════════════
+     HOME PAGE
+══════════════════════════════════════════════════ -->
+<div id="page-home" class="page active">
+
+  <div class="hero">
+    <div class="hero-eyebrow">Calshot Activity Centre</div>
+    <h1 class="hero-title">
+      Staff<br><span class="line2">Racing</span>
+    </h1>
+    <p class="hero-sub">After-work racing on the Solent. Three series, April to September 2026.</p>
+    <div class="hero-badges">
+      <span class="badge accent">2026 Season</span>
+      <span class="badge">April – September</span>
+      <span class="badge">Sailing Area A</span>
+      <span class="badge">Picos & Fusions</span>
+    </div>
+    <svg class="hero-wave" viewBox="0 0 1440 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0 40 C360 0 1080 0 1440 40 L1440 40 L0 40Z" fill="var(--hero-wave)"/>
+    </svg>
+  </div>
+
+  <!-- Latest Evening Results -->
+  <div class="section">
+    <div class="section-title">Latest Results</div>
+    <div class="card">
+      <div class="card-header">
+        <span class="card-header-title">Most Recent Evening</span>
+        <span class="badge">Results to follow</span>
+      </div>
+      <div class="card-body">
+        <div class="placeholder">
+          <div class="placeholder-icon">🏆</div>
+          <p>Results will appear here after each racing evening.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Current Series Standings -->
+  <div class="section">
+    <div class="section-title">Current Series</div>
+    <div class="card">
+      <div class="card-header">
+        <span class="card-header-title">Series 1 Standings</span>
+        <span class="badge">In progress</span>
+      </div>
+      <div class="card-body">
+        <div class="placeholder">
+          <div class="placeholder-icon">📊</div>
+          <p>Standings will update after each evening.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Overall Standings -->
+  <div class="section">
+    <div class="section-title">Overall Standings</div>
+    <div class="card">
+      <div class="card-header">
+        <span class="card-header-title">2026 Overall</span>
+        <span class="badge">Season in progress</span>
+      </div>
+      <div class="card-body">
+        <div class="placeholder">
+          <div class="placeholder-icon">🥇</div>
+          <p>Overall standings combine all three series.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════════════════════════
+     2026 RESULTS PAGE
+══════════════════════════════════════════════════ -->
+<div id="page-results2026" class="page">
+  <div class="hero" style="padding: 2.5rem 1.5rem 2rem;">
+    <div class="hero-eyebrow">2026 Season</div>
+    <h1 class="hero-title" style="font-size: clamp(2rem,6vw,3.5rem);">Series Results</h1>
+    <svg class="hero-wave" viewBox="0 0 1440 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0 40 C360 0 1080 0 1440 40 L1440 40 L0 40Z" fill="var(--hero-wave)"/>
+    </svg>
+  </div>
+
+  <div class="section">
+    <div class="tabs">
+      <button class="tab-btn active" onclick="showTab('series1')">Series 1</button>
+      <button class="tab-btn" onclick="showTab('series2')">Series 2</button>
+      <button class="tab-btn" onclick="showTab('series3')">Series 3</button>
+      <button class="tab-btn" onclick="showTab('overall')">Overall</button>
+    </div>
+
+    <div id="tab-series1" class="tab-panel active">
+      <div class="card">
+        <div class="card-header">
+          <span class="card-header-title">Series 1 — Apr to Jun</span>
+          <span class="badge">In progress</span>
+        </div>
+        <div class="card-body">
+          <div class="placeholder">
+            <div class="placeholder-icon">⛵</div>
+            <p>Series 1 results will appear here. Racing begins 14 April.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="tab-series2" class="tab-panel">
+      <div class="card">
+        <div class="card-header">
+          <span class="card-header-title">Series 2 — Jun to Jul</span>
+          <span class="badge">Not yet started</span>
+        </div>
+        <div class="card-body">
+          <div class="placeholder">
+            <div class="placeholder-icon">⛵</div>
+            <p>Series 2 results will appear here. Racing begins 23 June.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="tab-series3" class="tab-panel">
+      <div class="card">
+        <div class="card-header">
+          <span class="card-header-title">Series 3 — Aug to Sep</span>
+          <span class="badge">Not yet started</span>
+        </div>
+        <div class="card-body">
+          <div class="placeholder">
+            <div class="placeholder-icon">⛵</div>
+            <p>Series 3 results will appear here. Racing begins 11 August.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="tab-overall" class="tab-panel">
+      <div class="card">
+        <div class="card-header">
+          <span class="card-header-title">2026 Overall</span>
+          <span class="badge">Season in progress</span>
+        </div>
+        <div class="card-body">
+          <div class="placeholder">
+            <div class="placeholder-icon">🏆</div>
+            <p>Overall standings will be calculated from all three series.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════
+     2025 RESULTS PAGE
+══════════════════════════════════════════════════ -->
+<div id="page-results2025" class="page">
+  <div class="hero" style="padding: 2.5rem 1.5rem 2rem;">
+    <div class="hero-eyebrow">Historical</div>
+    <h1 class="hero-title" style="font-size: clamp(2rem,6vw,3.5rem);">2025 Season</h1>
+    <svg class="hero-wave" viewBox="0 0 1440 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0 40 C360 0 1080 0 1440 40 L1440 40 L0 40Z" fill="var(--hero-wave)"/>
+    </svg>
+  </div>
+
+  <div class="section">
+    <div class="card">
+      <div class="card-header">
+        <span class="card-header-title">2025 Final Standings</span>
+        <span class="badge">Season complete</span>
+      </div>
+      <div class="card-body">
+        <table class="results-table">
+          <thead>
+            <tr>
+              <th>Pos</th>
+              <th>Name</th>
+              <th>Division</th>
+              <th>R1</th><th>R2</th><th>R3</th><th>R4</th><th>R5</th>
+              <th>R6</th><th>R7</th><th>R8</th><th>R9</th><th>R10</th>
+              <th>Nett</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="pos-badge gold">1</span></td>
+              <td><strong>Ben LS</strong></td><td>Staff</td>
+              <td>—</td><td>—</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td>
+              <td><span class="score-chip nett">10</span></td>
+            </tr>
+            <tr>
+              <td><span class="pos-badge silver">2</span></td>
+              <td><strong>Rich S</strong></td><td>Staff</td>
+              <td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td>
+              <td><span class="score-chip nett">25</span></td>
+            </tr>
+            <tr>
+              <td><span class="pos-badge bronze">3</span></td>
+              <td><strong>Loz</strong></td><td>Visitor</td>
+              <td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td>
+              <td><span class="score-chip nett">27</span></td>
+            </tr>
+            <tr>
+              <td><span class="pos-badge">4</span></td>
+              <td><strong>Simon</strong></td><td>Staff</td>
+              <td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td>
+              <td><span class="score-chip nett">28</span></td>
+            </tr>
+            <tr>
+              <td><span class="pos-badge">5</span></td>
+              <td><strong>Luke H</strong></td><td>Staff</td>
+              <td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td>
+              <td><span class="score-chip nett">34</span></td>
+            </tr>
+          </tbody>
+        </table>
+        <p style="font-size:0.78rem; color: var(--muted); margin-top: 0.75rem;">Showing top 5. Full results to be added.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════
+     RACE DATES PAGE
+══════════════════════════════════════════════════ -->
+<div id="page-dates" class="page">
+  <div class="hero" style="padding: 2.5rem 1.5rem 2rem;">
+    <div class="hero-eyebrow">2026 Season</div>
+    <h1 class="hero-title" style="font-size: clamp(2rem,6vw,3.5rem);">Race Dates</h1>
+    <svg class="hero-wave" viewBox="0 0 1440 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0 40 C360 0 1080 0 1440 40 L1440 40 L0 40Z" fill="var(--hero-wave)"/>
+    </svg>
+  </div>
+
+  <div class="section">
+
+    <div class="section-title">Series 1</div>
+    <div class="card">
+      <div class="card-body" style="padding: 0.5rem 1.25rem;">
+        <ul class="dates-list">
+          <li>
+            <div class="date-label">14 April 2026<span class="series-tag">Series 1 · Race 1</span></div>
+            <div class="date-links">
+              <span class="pill-btn tbc">Results TBC</span>
+            </div>
+          </li>
+          <li>
+            <div class="date-label">28 April 2026<span class="series-tag">Series 1 · Race 2</span></div>
+            <div class="date-links">
+              <span class="pill-btn tbc">Results TBC</span>
+            </div>
+          </li>
+          <li>
+            <div class="date-label">12 May 2026<span class="series-tag">Series 1 · Race 3</span></div>
+            <div class="date-links">
+              <span class="pill-btn tbc">Results TBC</span>
+            </div>
+          </li>
+          <li>
+            <div class="date-label">2 June 2026<span class="series-tag">Series 1 · Race 4</span></div>
+            <div class="date-links">
+              <span class="pill-btn tbc">Results TBC</span>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="section-title" style="margin-top:1.5rem;">Series 2 — Main Summer</div>
+    <div class="card">
+      <div class="card-body" style="padding: 0.5rem 1.25rem;">
+        <ul class="dates-list">
+          <li>
+            <div class="date-label">23 June 2026<span class="series-tag">Series 2 · Race 1</span></div>
+            <div class="date-links"><span class="pill-btn tbc">Results TBC</span></div>
+          </li>
+          <li>
+            <div class="date-label">30 June 2026<span class="series-tag">Series 2 · Race 2</span></div>
+            <div class="date-links"><span class="pill-btn tbc">Results TBC</span></div>
+          </li>
+          <li>
+            <div class="date-label">7 July 2026<span class="series-tag">Series 2 · Race 3</span></div>
+            <div class="date-links"><span class="pill-btn tbc">Results TBC</span></div>
+          </li>
+          <li>
+            <div class="date-label">14 July 2026<span class="series-tag">Series 2 · Race 4</span></div>
+            <div class="date-links"><span class="pill-btn tbc">Results TBC</span></div>
+          </li>
+          <li>
+            <div class="date-label">21 July 2026<span class="series-tag">Series 2 · Race 5</span></div>
+            <div class="date-links"><span class="pill-btn tbc">Results TBC</span></div>
+          </li>
+          <li>
+            <div class="date-label">28 July 2026<span class="series-tag">Series 2 · Race 6</span></div>
+            <div class="date-links"><span class="pill-btn tbc">Results TBC</span></div>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="section-title" style="margin-top:1.5rem;">Series 3</div>
+    <div class="card">
+      <div class="card-body" style="padding: 0.5rem 1.25rem;">
+        <ul class="dates-list">
+          <li>
+            <div class="date-label">11 August 2026<span class="series-tag">Series 3 · Race 1</span></div>
+            <div class="date-links"><span class="pill-btn tbc">Results TBC</span></div>
+          </li>
+          <li>
+            <div class="date-label">18 August 2026<span class="series-tag">Series 3 · Race 2</span></div>
+            <div class="date-links"><span class="pill-btn tbc">Results TBC</span></div>
+          </li>
+          <li>
+            <div class="date-label">25 August 2026<span class="series-tag">Series 3 · Race 3</span></div>
+            <div class="date-links"><span class="pill-btn tbc">Results TBC</span></div>
+          </li>
+          <li>
+            <div class="date-label">8 September 2026<span class="series-tag">Series 3 · Race 4</span></div>
+            <div class="date-links"><span class="pill-btn tbc">Results TBC</span></div>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="section-title" style="margin-top:1.5rem;">Special Events</div>
+    <div class="card">
+      <div class="card-body" style="padding: 0.5rem 1.25rem;">
+        <ul class="dates-list">
+          <li>
+            <div class="date-label">TBC<span class="series-tag">Long Distance Race</span></div>
+            <span class="special-tag">Special</span>
+            <div class="date-links"><span class="pill-btn tbc">Date TBC</span></div>
+          </li>
+          <li>
+            <div class="date-label">TBC<span class="series-tag">Pub Run Race</span></div>
+            <span class="special-tag">Special</span>
+            <div class="date-links"><span class="pill-btn tbc">Date TBC</span></div>
+          </li>
+          <li>
+            <div class="date-label">TBC<span class="series-tag">Team Race Evening</span></div>
+            <span class="special-tag">Special</span>
+            <div class="date-links"><span class="pill-btn tbc">Date TBC</span></div>
+          </li>
+          <li>
+            <div class="date-label">TBC<span class="series-tag">Additional Special Event</span></div>
+            <span class="special-tag">Special</span>
+            <div class="date-links"><span class="pill-btn tbc">Date TBC</span></div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════
+     SAILING INSTRUCTIONS PAGE
+══════════════════════════════════════════════════ -->
+<div id="page-si" class="page">
+  <div class="hero" style="padding: 2.5rem 1.5rem 2rem;">
+    <div class="hero-eyebrow">CAC Staff Racing 2026</div>
+    <h1 class="hero-title" style="font-size: clamp(2rem,6vw,3.5rem);">Sailing Instructions</h1>
+    <svg class="hero-wave" viewBox="0 0 1440 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0 40 C360 0 1080 0 1440 40 L1440 40 L0 40Z" fill="var(--hero-wave)"/>
+    </svg>
+  </div>
+
+  <div class="section">
+    <a href="SIs_2026.pdf" class="download-btn" download>
+      ⬇ Download as PDF
+    </a>
+
+    <div class="si-content">
+      <h2>1 — Rules</h2>
+      <p>These races are governed by The Racing Rules of Sailing (RRS) 2025–2028 except where changed by these Sailing Instructions.</p>
+
+      <h2>2 — Organising Authority</h2>
+      <p>The organising authority is Calshot Activity Centre (CAC).</p>
+
+      <h2>3 — Official Notices</h2>
+      <p>All official notices will be communicated via the designated staff racing WhatsApp group. Competitors are responsible for checking for notices before each racing evening.</p>
+
+      <h2>4 — Racing Schedule</h2>
+      <h3>4.1 Series Structure</h3>
+      <p>Racing is divided into three series. Series 2 is the main summer series. Four dates across the season will be designated as special events with their own separate scoring.</p>
+      <table>
+        <thead><tr><th>Series</th><th>Date Range</th><th>Evenings</th><th>Est. Races</th></tr></thead>
+        <tbody>
+          <tr><td>Series 1</td><td>14 Apr – 2 Jun</td><td>3*</td><td>6–9</td></tr>
+          <tr><td>Series 2 (Main)</td><td>23 Jun – 28 Jul</td><td>5*</td><td>10–15</td></tr>
+          <tr><td>Series 3</td><td>11 Aug – 8 Sep</td><td>3*</td><td>6–9</td></tr>
+        </tbody>
+      </table>
+      <h3>4.2 Sign On and Warning Signal</h3>
+      <p>Competitors must be signed on by 1750. The warning signal for the first race of each evening will be made at 1800. No warning signal will be made after 2000.</p>
+
+      <h2>5 — Sign On</h2>
+      <p>The sign-on whiteboard will be displayed at the race office. Available boats will be listed; competitors claim boats on a first-come, first-served basis. Sign on closes when the Race Officer launches.</p>
+      <p>A competitor who has signed on but does not race any race that evening will be recorded as Did Not Compete (DNC) rather than Did Not Start (DNS).</p>
+
+      <h2>6 — Boats</h2>
+      <p>Boats are centre-supplied dinghies (Picos and Fusions). Picos and Fusions will be scored together without handicap adjustment, as they have been found to be equivalent in performance at this venue.</p>
+      <p>If other boat types are brought into use, Portsmouth Yardstick (PY) handicap calculations will be applied for those boats only. This will be notified before the evening.</p>
+      <p>Competitors shall not modify boats or equipment in any way. Any damage must be reported to the Race Officer on return ashore.</p>
+
+      <h2>7 — Racing Area</h2>
+      <p>All racing will take place in Sailing Area A unless otherwise notified before the start of the evening.</p>
+
+      <h2>8 — Safety</h2>
+      <h3>8.1 Personal Buoyancy</h3>
+      <p>A buoyancy aid or lifejacket shall be worn at all times while afloat. This changes RRS 1.2.</p>
+      <h3>8.2 Whistle</h3>
+      <p>All competitors shall carry a whistle while afloat. The Race Officer may check for whistles at any time. A competitor found to be racing without a whistle will receive a 20% scoring penalty applied to that race.</p>
+      <h3>8.3 Helmets</h3>
+      <p>The Race Officer may require competitors to wear a helmet. The Race Officer's decision is final. A competitor who launches without the required helmet will be disqualified from all races sailed that evening.</p>
+      <h3>8.4 Safety Boat</h3>
+      <p>A safety boat will be on the water for all racing. The provision of safety boat cover does not reduce a competitor's own responsibility for their safety.</p>
+      <h3>8.5 Risk Statement</h3>
+      <p>RRS 3 states: "The responsibility for a boat's decision to participate in a race or to continue to race is hers alone." By launching, each competitor accepts responsibility for their own safety and their decision to go afloat.</p>
+
+      <h2>9 — Courses</h2>
+      <p>Courses will be set by the Race Officer on the water and communicated to competitors before each start by flags, boards or verbal instruction.</p>
+      <p>The Race Officer may shorten a race in progress by displaying flag S with two sound signals at the finishing line.</p>
+
+      <h2>10 — Time Limit</h2>
+      <p>All equipment must be off the water no later than 30 minutes before sunset. The Race Officer will not start a race that cannot reasonably be completed within this limit.</p>
+
+      <h2>11 — The Start</h2>
+      <p>Races will be started using the following sequence:</p>
+      <table>
+        <thead><tr><th>Time</th><th>Flag</th><th>Sound</th></tr></thead>
+        <tbody>
+          <tr><td>3 min</td><td>Flag B ↑ displayed (Warning)</td><td>1 sound</td></tr>
+          <tr><td>2 min</td><td>Flag P ↑ displayed (Preparatory)</td><td>1 sound</td></tr>
+          <tr><td>1 min</td><td>Flag P ↓ removed (1-minute warning)</td><td>1 sound</td></tr>
+          <tr><td>0 – Start</td><td>Flag B ↓ removed (Starting signal)</td><td>1 sound</td></tr>
+        </tbody>
+      </table>
+      <p>The starting line is between the Race Officer's vessel at the starboard end and a port-end mark. A boat that does not start within 5 minutes will be scored DNS without a hearing.</p>
+
+      <h2>12 — The Finish</h2>
+      <p>The finishing line will be indicated by the Race Officer. If the Race Officer is absent when a boat finishes, the boat shall report her finishing position at the first reasonable opportunity.</p>
+
+      <h2>13 — Retirement</h2>
+      <p>Any boat retiring shall inform the Race Officer as soon as possible. If a competitor returns to shore, they shall contact the Race Officer by radio as soon as practicable.</p>
+
+      <h2>14 — Penalty System</h2>
+      <h3>14.1 On-Water Penalties</h3>
+      <ul>
+        <li>Mark-touching: one-turn penalty. This changes RRS 44.1.</li>
+        <li>Right-of-way infringement: two-turn penalty as per RRS 44.2.</li>
+      </ul>
+      <p>A boat that has carried out a penalty turn shall inform the Race Officer as soon as practicable after finishing.</p>
+      <h3>14.2 Protests</h3>
+      <p>A competitor who wishes to protest shall inform the Race Officer before the next starting sequence begins. In "he said, she said" situations with no witnesses, the balance of probability will be given to no foul having occurred. The Race Officer may instruct a boat to carry out penalty turns if a breach is observed directly.</p>
+
+      <h2>15 — Scoring</h2>
+      <h3>15.1 Points System</h3>
+      <p>The Low Points Scoring System (RRS Appendix A) applies.</p>
+      <h3>15.2 Minimum Races</h3>
+      <p>A minimum of 3 races must be completed to constitute a valid series.</p>
+      <h3>15.3 Discards</h3>
+      <p>Discards are calculated using the expression int(s/3), where s is the number of races sailed — approximately one discard per three races.</p>
+      <h3>15.4 Ties</h3>
+      <p>Ties broken by most wins, then most seconds, then most thirds, excluding discarded scores. RRS Appendix A8.</p>
+      <h3>15.5 Scoring Codes</h3>
+      <table>
+        <thead><tr><th>Code</th><th>Meaning</th><th>Points</th><th>Discardable</th></tr></thead>
+        <tbody>
+          <tr><td>DNF</td><td>Did Not Finish</td><td>Boats signed on + 1</td><td>Yes</td></tr>
+          <tr><td>DNS</td><td>Did Not Start</td><td>Boats signed on + 1</td><td>Yes</td></tr>
+          <tr><td>DSQ</td><td>Disqualified</td><td>Boats signed on + 1</td><td>Yes</td></tr>
+          <tr><td>DNC</td><td>Did Not Compete</td><td>Boats in series + 1</td><td>Yes</td></tr>
+          <tr><td>WRK</td><td>Work commitment (RO verified)</td><td>Average of non-discarded scores</td><td>Yes</td></tr>
+        </tbody>
+      </table>
+      <h3>15.6 Redress</h3>
+      <p>Redress may be awarded if a competitor is fouled without a penalty turn being taken, or stops to assist a vessel in distress. Report to the Race Officer before the next starting sequence. RRS 62.</p>
+
+      <h2>16 — Prizes</h2>
+      <p>Series prizes are awarded to the winner of each individual series (minimum 2 competitors). Overall trophies are awarded at season end for Overall, Female, Staff and Non-DI categories, subject to minimum entry numbers of 2, 3 and 5 for 1st, 2nd and 3rd respectively.</p>
+
+      <h2>17 — Special Events</h2>
+      <p>Four special events will be held during the season: Long Distance Race, Pub Run Race, Team Race Evening, and one TBC. Special event results do not count towards series standings.</p>
+
+      <h2>18 — General Conduct</h2>
+      <p>Competitors shall comply with reasonable requests from race officials. Race fairly, look after each other on the water, and enjoy yourselves.</p>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <p>Calshot Activity Centre Staff Racing 2026 &nbsp;·&nbsp; Sailing Area A, Southampton Water</p>
+  <p style="margin-top:0.4rem; font-size:0.72rem;">Results published after each evening · Questions to the Race Officer</p>
+</footer>
+
+<script>
+
+  function toggleTheme() {
+    const html = document.documentElement;
+    const btn = document.getElementById('theme-btn');
+    const currentlyDark = html.getAttribute('data-theme') === 'dark' ||
+      (html.getAttribute('data-theme') !== 'light' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+    if (currentlyDark) {
+      html.setAttribute('data-theme', 'light');
+      btn.textContent = '☀️';
+      localStorage.setItem('cac-theme', 'light');
+    } else {
+      html.setAttribute('data-theme', 'dark');
+      btn.textContent = '🌙';
+      localStorage.setItem('cac-theme', 'dark');
+    }
+  }
+  (function() {
+    const saved = localStorage.getItem('cac-theme');
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const prefersLight = window.matchMedia('(prefers-color-scheme: light)').matches;
+    const html = document.documentElement;
+
+    if (saved === 'dark' || (!saved && prefersDark)) {
+      html.setAttribute('data-theme', 'dark');
+    } else if (saved === 'light' || (!saved && prefersLight)) {
+      html.setAttribute('data-theme', 'light');
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      const btn = document.getElementById('theme-btn');
+      if (!btn) return;
+      const isDark = html.getAttribute('data-theme') === 'dark' ||
+                     (!html.getAttribute('data-theme') && prefersDark);
+      btn.textContent = isDark ? '🌙' : '☀️';
+    });
+  })();
+
+  function showPage(id) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
+    document.getElementById('page-' + id).classList.add('active');
+    document.getElementById('nav-' + id).classList.add('active');
+    window.scrollTo(0, 0);
+    return false;
+  }
+
+  function showTab(id) {
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('tab-' + id).classList.add('active');
+    event.target.classList.add('active');
+  }
+</script>
+
+</body>
+</html>
