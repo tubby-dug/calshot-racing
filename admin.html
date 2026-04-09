@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CAC Racing — Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;900&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --navy:    #0a1628;
+      --navy2:   #112240;
+      --blue:    #1a4b8c;
+      --blue2:   #2563b0;
+      --sky:     #3b9de8;
+      --accent:  #f0a500;
+      --white:   #f8fafc;
+      --muted:   #94a3b8;
+      --surface: #162035;
+      --border:  rgba(255,255,255,0.08);
+      --success: #22c55e;
+      --error:   #ef4444;
+      --font-display: 'Barlow Condensed', sans-serif;
+      --font-body:    'Barlow', sans-serif;
+    }
+
+    body {
+      background: var(--navy);
+      color: var(--white);
+      font-family: var(--font-body);
+      min-height: 100vh;
+      padding: 2rem 1rem;
+    }
+
+    .container { max-width: 720px; margin: 0 auto; }
+
+    /* ── HEADER ──────────────────────────────────────── */
+    .admin-header {
+      display: flex; align-items: center;
+      justify-content: space-between;
+      margin-bottom: 2rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .admin-title {
+      font-family: var(--font-display);
+      font-size: 1.8rem; font-weight: 900;
+      text-transform: uppercase; letter-spacing: 0.05em;
+    }
+    .admin-title span { color: var(--accent); }
+    .back-link {
+      font-size: 0.8rem; color: var(--muted);
+      text-decoration: none; font-weight: 600;
+      letter-spacing: 0.06em; text-transform: uppercase;
+    }
+    .back-link:hover { color: var(--white); }
+
+    /* ── CARD ────────────────────────────────────────── */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px; overflow: hidden;
+      margin-bottom: 1.5rem;
+    }
+    .card-header {
+      padding: 0.85rem 1.25rem;
+      background: rgba(255,255,255,0.04);
+      border-bottom: 1px solid var(--border);
+      font-family: var(--font-display);
+      font-size: 1rem; font-weight: 700;
+      letter-spacing: 0.06em; text-transform: uppercase;
+    }
+    .card-body { padding: 1.5rem; }
+
+    /* ── LOCK SCREEN ─────────────────────────────────── */
+    #lock-screen {
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      min-height: 60vh; text-align: center;
+    }
+    .lock-icon { font-size: 3rem; margin-bottom: 1rem; opacity: 0.5; }
+    .lock-title {
+      font-family: var(--font-display);
+      font-size: 1.5rem; font-weight: 900;
+      text-transform: uppercase; margin-bottom: 0.5rem;
+    }
+    .lock-sub { color: var(--muted); font-size: 0.9rem; margin-bottom: 1.5rem; }
+
+    /* ── FORM ELEMENTS ───────────────────────────────── */
+    .form-group { margin-bottom: 1.25rem; }
+    .form-label {
+      display: block; font-size: 0.78rem; font-weight: 600;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--muted); margin-bottom: 0.4rem;
+    }
+    .form-input, .form-select {
+      width: 100%; padding: 0.7rem 1rem;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid var(--border);
+      border-radius: 8px; color: var(--white);
+      font-family: var(--font-body); font-size: 0.95rem;
+      transition: border-color 0.15s;
+      appearance: none;
+    }
+    .form-input:focus, .form-select:focus {
+      outline: none; border-color: var(--sky);
+    }
+    .form-input[type="file"] { cursor: pointer; }
+    .form-input[type="password"] { letter-spacing: 0.1em; }
+    .form-select option { background: var(--navy2); }
+
+    /* ── BUTTONS ─────────────────────────────────────── */
+    .btn {
+      padding: 0.7rem 1.5rem; border-radius: 8px;
+      font-family: var(--font-body); font-size: 0.9rem;
+      font-weight: 600; cursor: pointer; border: none;
+      transition: all 0.15s; display: inline-flex;
+      align-items: center; gap: 0.5rem;
+    }
+    .btn-primary { background: var(--blue2); color: white; }
+    .btn-primary:hover { background: var(--sky); }
+    .btn-primary:disabled { background: rgba(255,255,255,0.1); color: var(--muted); cursor: not-allowed; }
+    .btn-accent { background: var(--accent); color: var(--navy); font-weight: 700; }
+    .btn-accent:hover { opacity: 0.85; }
+    .btn-danger { background: rgba(239,68,68,0.15); color: #ef4444; border: 1px solid rgba(239,68,68,0.3); }
+    .btn-danger:hover { background: #ef4444; color: white; }
+    .btn-small { padding: 0.3rem 0.8rem; font-size: 0.78rem; border-radius: 6px; }
+    .btn-ghost {
+      background: none; border: 1px solid var(--border);
+      color: var(--muted); padding: 0.7rem 1.5rem;
+    }
+    .btn-ghost:hover { border-color: var(--white); color: var(--white); }
+
+    /* ── DATE INPUT ──────────────────────────────────── */
+    #evening-date-group { display: none; }
+    #evening-date-group.visible { display: block; }
+
+    /* ── PREVIEW ─────────────────────────────────────── */
+    #preview-section { display: none; }
+    #preview-section.visible { display: block; }
+    .preview-table {
+      width: 100%; border-collapse: collapse;
+      font-size: 0.85rem; overflow-x: auto;
+    }
+    .preview-table th {
+      text-align: left; padding: 0.4rem 0.6rem;
+      font-size: 0.72rem; font-weight: 700;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--muted); border-bottom: 1px solid var(--border);
+    }
+    .preview-table td {
+      padding: 0.5rem 0.6rem;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+    }
+    .preview-wrap { overflow-x: auto; }
+    .preview-meta {
+      font-size: 0.78rem; color: var(--muted);
+      margin-bottom: 0.75rem;
+    }
+
+    /* ── STATUS MESSAGES ─────────────────────────────── */
+    .status {
+      padding: 0.75rem 1rem; border-radius: 8px;
+      font-size: 0.88rem; margin-bottom: 1rem;
+      display: none;
+    }
+    .status.visible { display: block; }
+    .status.success { background: rgba(34,197,94,0.15); border: 1px solid rgba(34,197,94,0.3); color: var(--success); }
+    .status.error { background: rgba(239,68,68,0.15); border: 1px solid rgba(239,68,68,0.3); color: var(--error); }
+    .status.info { background: rgba(59,157,232,0.15); border: 1px solid rgba(59,157,232,0.3); color: var(--sky); }
+
+    /* ── FILE LIST ───────────────────────────────────── */
+    .file-list { list-style: none; }
+    .file-item {
+      display: flex; align-items: center;
+      padding: 0.75rem 0; border-bottom: 1px solid var(--border);
+      gap: 0.75rem; flex-wrap: wrap;
+    }
+    .file-item:last-child { border-bottom: none; }
+    .file-key {
+      font-family: var(--font-display); font-weight: 700;
+      font-size: 0.95rem; flex: 1; min-width: 150px;
+    }
+    .file-meta { font-size: 0.75rem; color: var(--muted); }
+    .file-actions { display: flex; gap: 0.5rem; margin-left: auto; }
+    .empty-list { text-align: center; padding: 2rem; color: var(--muted); font-size: 0.9rem; }
+
+    /* ── LOADING ─────────────────────────────────────── */
+    .spinner {
+      display: inline-block; width: 18px; height: 18px;
+      border: 2px solid rgba(255,255,255,0.2);
+      border-top-color: var(--sky); border-radius: 50%;
+      animation: spin 0.7s linear infinite; vertical-align: middle;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── DIVIDER ─────────────────────────────────────── */
+    .divider {
+      display: flex; align-items: center; gap: 1rem;
+      margin: 1.5rem 0; color: var(--muted); font-size: 0.78rem;
+    }
+    .divider::before, .divider::after {
+      content: ''; flex: 1; height: 1px;
+      background: var(--border);
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+
+  <!-- HEADER -->
+  <div class="admin-header">
+    <div class="admin-title">CAC <span>Racing</span> Admin</div>
+    <a href="index.html" class="back-link">← Back to Site</a>
+  </div>
+
+  <!-- LOCK SCREEN -->
+  <div id="lock-screen">
+    <div class="lock-icon">🔒</div>
+    <div class="lock-title">Admin Access</div>
+    <div class="lock-sub">Enter your admin password to continue.</div>
+    <div style="width:100%; max-width:320px;">
+      <div class="form-group">
+        <input type="password" class="form-input" id="password-input"
+          placeholder="Admin password" autocomplete="current-password" />
+      </div>
+      <div id="auth-status" class="status error"></div>
+      <button class="btn btn-accent" style="width:100%;" onclick="login()">
+        Unlock Admin
+      </button>
+    </div>
+  </div>
+
+  <!-- ADMIN CONTENT (hidden until authenticated) -->
+  <div id="admin-content" style="display:none;">
+
+    <!-- UPLOAD SECTION -->
+    <div class="card">
+      <div class="card-header">Upload Results</div>
+      <div class="card-body">
+
+        <div id="upload-status" class="status"></div>
+
+        <div class="form-group">
+          <label class="form-label">Results Type</label>
+          <select class="form-select" id="file-type" onchange="onTypeChange()">
+            <option value="">— Select type —</option>
+            <option value="series1">Series 1</option>
+            <option value="series2">Series 2</option>
+            <option value="series3">Series 3</option>
+            <option value="overall">Overall</option>
+            <option value="evening">Individual Evening</option>
+          </select>
+        </div>
+
+        <div class="form-group" id="evening-date-group">
+          <label class="form-label">Evening Date</label>
+          <input type="date" class="form-input" id="evening-date" />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Sailwave HTML Export</label>
+          <input type="file" class="form-input" id="file-input"
+            accept=".html,.htm" onchange="onFileSelected()" />
+        </div>
+
+        <!-- Preview section -->
+        <div id="preview-section">
+          <div class="divider">Preview</div>
+          <div class="preview-meta" id="preview-meta"></div>
+          <div class="preview-wrap">
+            <table class="preview-table" id="preview-table">
+              <thead id="preview-thead"></thead>
+              <tbody id="preview-tbody"></tbody>
+            </table>
+          </div>
+          <div class="divider"></div>
+          <div style="display:flex; gap:0.75rem; flex-wrap:wrap; margin-top:0.5rem;">
+            <button class="btn btn-accent" id="confirm-btn" onclick="confirmUpload()">
+              ✓ Confirm &amp; Upload
+            </button>
+            <button class="btn btn-ghost" onclick="cancelUpload()">Cancel</button>
+          </div>
+        </div>
+
+        <div id="upload-btn-group">
+          <button class="btn btn-primary" onclick="previewFile()" id="preview-btn" disabled>
+            Preview Results
+          </button>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- FILE MANAGER -->
+    <div class="card">
+      <div class="card-header" style="display:flex; justify-content:space-between; align-items:center;">
+        <span>Files in R2</span>
+        <button class="btn btn-ghost btn-small" onclick="loadFileList()">↻ Refresh</button>
+      </div>
+      <div class="card-body">
+        <div id="file-manager-status" class="status"></div>
+        <ul class="file-list" id="file-list">
+          <li class="empty-list"><span class="spinner"></span> Loading...</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- LOGOUT -->
+    <div style="text-align:center; margin-top:1rem;">
+      <button class="btn btn-ghost btn-small" onclick="logout()">Lock Admin</button>
+    </div>
+
+  </div><!-- end admin-content -->
+
+</div><!-- end container -->
+
+<script>
+  const API = 'https://calshot-racing-api.doug-reid-21.workers.dev';
+  let sessionPassword = '';
+  let pendingFile = null;
+  let pendingKey = null;
+
+  // ── AUTH ──────────────────────────────────────────────────────
+  async function login() {
+    const pw = document.getElementById('password-input').value;
+    if (!pw) return;
+    const statusEl = document.getElementById('auth-status');
+    statusEl.textContent = 'Checking...';
+    statusEl.className = 'status info visible';
+
+    try {
+      const res = await fetch(API + '/verify-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-Admin-Password': pw },
+        body: JSON.stringify({})
+      });
+      if (res.ok) {
+        sessionPassword = pw;
+        document.getElementById('lock-screen').style.display = 'none';
+        document.getElementById('admin-content').style.display = 'block';
+        document.getElementById('password-input').value = '';
+        statusEl.className = 'status';
+        loadFileList();
+      } else {
+        statusEl.textContent = 'Incorrect password.';
+        statusEl.className = 'status error visible';
+      }
+    } catch(e) {
+      statusEl.textContent = 'Could not reach the server. Check your connection.';
+      statusEl.className = 'status error visible';
+    }
+  }
+
+  function logout() {
+    sessionPassword = '';
+    pendingFile = null;
+    pendingKey = null;
+    document.getElementById('lock-screen').style.display = 'flex';
+    document.getElementById('admin-content').style.display = 'none';
+    document.getElementById('password-input').value = '';
+  }
+
+  // Allow Enter key on password field
+  document.getElementById('password-input').addEventListener('keydown', e => {
+    if (e.key === 'Enter') login();
+  });
+
+  // ── UPLOAD FLOW ───────────────────────────────────────────────
+  function onTypeChange() {
+    const type = document.getElementById('file-type').value;
+    const dateGroup = document.getElementById('evening-date-group');
+    if (type === 'evening') {
+      dateGroup.classList.add('visible');
+    } else {
+      dateGroup.classList.remove('visible');
+    }
+    updatePreviewBtn();
+  }
+
+  function onFileSelected() {
+    updatePreviewBtn();
+    // Reset preview if file changes
+    document.getElementById('preview-section').classList.remove('visible');
+    document.getElementById('upload-btn-group').style.display = 'block';
+  }
+
+  function updatePreviewBtn() {
+    const type = document.getElementById('file-type').value;
+    const file = document.getElementById('file-input').files[0];
+    const date = document.getElementById('evening-date').value;
+    const ready = type && file && (type !== 'evening' || date);
+    document.getElementById('preview-btn').disabled = !ready;
+  }
+
+  async function previewFile() {
+    const type = document.getElementById('file-type').value;
+    const file = document.getElementById('file-input').files[0];
+    const date = document.getElementById('evening-date').value;
+
+    if (!type || !file) return;
+
+    // Build the key
+    let key;
+    if (type === 'evening') {
+      if (!date) { showUploadStatus('Please select a date for the evening.', 'error'); return; }
+      key = 'evening_' + date + '.html';
+    } else {
+      key = type + '.html';
+    }
+
+    // Read the file
+    const html = await readFileAsText(file);
+
+    // Parse it
+    const data = parseSailwave(html);
+    if (!data || !data.rows || data.rows.length === 0) {
+      showUploadStatus('Could not parse results from this file. Make sure it is a Sailwave HTML export.', 'error');
+      return;
+    }
+
+    // Store pending
+    pendingFile = html;
+    pendingKey = key;
+
+    // Show preview
+    document.getElementById('preview-meta').textContent =
+      key + '  ·  ' + data.rows.length + ' competitors  ·  ' + data.sailed + ' races  ·  ' + data.discards + ' discards';
+
+    const thead = document.getElementById('preview-thead');
+    const tbody = document.getElementById('preview-tbody');
+
+    thead.innerHTML = '<tr><th>Pos</th><th>Name</th><th>Division</th>' +
+      data.raceHeaders.slice(0, 5).map(h => '<th>' + h.split(' ')[0] + '</th>').join('') +
+      (data.raceHeaders.length > 5 ? '<th>+' + (data.raceHeaders.length - 5) + ' more</th>' : '') +
+      '<th>Nett</th></tr>';
+
+    tbody.innerHTML = data.rows.map((row, i) =>
+      '<tr><td>' + (i+1) + '</td><td><strong>' + row.name + '</strong></td><td>' + row.division + '</td>' +
+      row.races.slice(0, 5).map(r => '<td style="' + (r.discarded ? 'opacity:0.4;text-decoration:line-through' : '') + '">' + r.score + '</td>').join('') +
+      (data.raceHeaders.length > 5 ? '<td>...</td>' : '') +
+      '<td><strong>' + row.nett + '</strong></td></tr>'
+    ).join('');
+
+    document.getElementById('preview-section').classList.add('visible');
+    document.getElementById('upload-btn-group').style.display = 'none';
+    clearUploadStatus();
+  }
+
+  async function confirmUpload() {
+    if (!pendingFile || !pendingKey) return;
+    const btn = document.getElementById('confirm-btn');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span> Uploading...';
+
+    try {
+      const res = await fetch(API + '/upload', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Admin-Password': sessionPassword
+        },
+        body: JSON.stringify({ key: pendingKey, html: pendingFile })
+      });
+      const result = await res.json();
+      if (res.ok) {
+        showUploadStatus('✓ ' + pendingKey + ' uploaded successfully.', 'success');
+        cancelUpload();
+        loadFileList();
+      } else {
+        showUploadStatus('Upload failed: ' + (result.error || 'Unknown error'), 'error');
+      }
+    } catch(e) {
+      showUploadStatus('Upload failed: ' + e.message, 'error');
+    }
+
+    btn.disabled = false;
+    btn.innerHTML = '✓ Confirm & Upload';
+  }
+
+  function cancelUpload() {
+    pendingFile = null;
+    pendingKey = null;
+    document.getElementById('preview-section').classList.remove('visible');
+    document.getElementById('upload-btn-group').style.display = 'block';
+    document.getElementById('file-input').value = '';
+    document.getElementById('file-type').value = '';
+    document.getElementById('evening-date').value = '';
+    document.getElementById('evening-date-group').classList.remove('visible');
+    document.getElementById('preview-btn').disabled = true;
+  }
+
+  function showUploadStatus(msg, type) {
+    const el = document.getElementById('upload-status');
+    el.textContent = msg;
+    el.className = 'status ' + type + ' visible';
+  }
+
+  function clearUploadStatus() {
+    document.getElementById('upload-status').className = 'status';
+  }
+
+  // ── FILE MANAGER ──────────────────────────────────────────────
+  async function loadFileList() {
+    const list = document.getElementById('file-list');
+    list.innerHTML = '<li class="empty-list"><span class="spinner"></span> Loading...</li>';
+
+    try {
+      const res = await fetch(API + '/files');
+      const files = await res.json();
+
+      if (!files || files.length === 0) {
+        list.innerHTML = '<li class="empty-list">No files uploaded yet.</li>';
+        return;
+      }
+
+      // Sort: series first, then overall, then evenings newest first
+      const order = ['series1.html','series2.html','series3.html','overall.html'];
+      files.sort((a, b) => {
+        const ai = order.indexOf(a.key);
+        const bi = order.indexOf(b.key);
+        if (ai !== -1 && bi !== -1) return ai - bi;
+        if (ai !== -1) return -1;
+        if (bi !== -1) return 1;
+        return b.key.localeCompare(a.key);
+      });
+
+      list.innerHTML = files.map(f => {
+        const uploaded = new Date(f.uploaded).toLocaleString('en-GB', {
+          day: 'numeric', month: 'short', year: 'numeric',
+          hour: '2-digit', minute: '2-digit'
+        });
+        const kb = (f.size / 1024).toFixed(1);
+        return '<li class="file-item">' +
+          '<div class="file-key">' + f.key + '</div>' +
+          '<div class="file-meta">' + kb + ' KB · Uploaded ' + uploaded + '</div>' +
+          '<div class="file-actions">' +
+          '<button class="btn btn-danger btn-small" onclick="deleteFile(\'' + f.key + '\')">Delete</button>' +
+          '</div></li>';
+      }).join('');
+
+    } catch(e) {
+      list.innerHTML = '<li class="empty-list" style="color:#ef4444;">Could not load file list.</li>';
+    }
+  }
+
+  async function deleteFile(key) {
+    if (!confirm('Delete ' + key + '? This cannot be undone.')) return;
+    const statusEl = document.getElementById('file-manager-status');
+    try {
+      const res = await fetch(API + '/file/' + encodeURIComponent(key), {
+        method: 'DELETE',
+        headers: { 'X-Admin-Password': sessionPassword }
+      });
+      const result = await res.json();
+      if (res.ok) {
+        statusEl.textContent = '✓ ' + key + ' deleted.';
+        statusEl.className = 'status success visible';
+        loadFileList();
+        setTimeout(() => { statusEl.className = 'status'; }, 3000);
+      } else {
+        statusEl.textContent = 'Delete failed: ' + (result.error || 'Unknown error');
+        statusEl.className = 'status error visible';
+      }
+    } catch(e) {
+      statusEl.textContent = 'Delete failed: ' + e.message;
+      statusEl.className = 'status error visible';
+    }
+  }
+
+  // ── SAILWAVE PARSER ───────────────────────────────────────────
+  function parseSailwave(html) {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(html, 'text/html');
+
+    const caption = doc.querySelector('.summarycaption, .caption');
+    const captionText = caption ? caption.textContent : '';
+    const sailed   = captionText.match(/Sailed:\s*(\d+)/)?.[1] || '?';
+    const discards = captionText.match(/Discards:\s*(\d+)/)?.[1] || '0';
+    const entries  = captionText.match(/Entries:\s*(\d+)/)?.[1] || '?';
+
+    const headerRow = doc.querySelector('.titlerow');
+    const headers = headerRow
+      ? [...headerRow.querySelectorAll('th')].map(th => th.textContent.trim().replace(/\s+/g, ' '))
+      : [];
+
+    const raceStartIdx = headers.findIndex(h => /^R\d+/.test(h));
+    const raceHeaders  = headers.slice(raceStartIdx, headers.length - 2);
+
+    const rows = [];
+    doc.querySelectorAll('.summaryrow').forEach(tr => {
+      const cells = [...tr.querySelectorAll('td')];
+      if (cells.length < 3) return;
+      const row = {
+        name: cells[0].textContent.trim(),
+        division: cells[1].textContent.trim(),
+        sex: cells[2].textContent.trim(),
+        races: [],
+        total: '',
+        nett: '',
+      };
+      cells.forEach((td, i) => {
+        if (i < raceStartIdx) return;
+        const text = td.textContent.trim();
+        if (i === cells.length - 1) { row.nett = text; }
+        else if (i === cells.length - 2) { row.total = text; }
+        else {
+          const discarded = text.startsWith('(');
+          row.races.push({ score: text.replace(/^\(|\)$/g, ''), discarded });
+        }
+      });
+      rows.push(row);
+    });
+
+    return { sailed, discards, entries, raceHeaders, rows };
+  }
+
+  // ── UTILS ─────────────────────────────────────────────────────
+  function readFileAsText(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = e => resolve(e.target.result);
+      reader.onerror = reject;
+      reader.readAsText(file, 'ISO-8859-1');
+    });
+  }
+</script>
+</body>
+</html>
