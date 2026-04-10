@@ -494,6 +494,7 @@
       <button class="tab-btn" onclick="showTab('series2')">Series 2</button>
       <button class="tab-btn" onclick="showTab('series3')">Series 3</button>
       <button class="tab-btn" onclick="showTab('overall')">Overall</button>
+      <button class="tab-btn" onclick="showTab('specials')">Special Races</button>
     </div>
 
     <div id="tab-series1" class="tab-panel active">
@@ -571,181 +572,48 @@
   </div>
 
   <div class="section">
-    <div class="card">
-      <div class="card-header">
-        <span class="card-header-title">2025 Final Standings</span>
-        <span class="badge">10 races · 17 entries · 3 discards</span>
-      </div>
-      <div class="card-body" style="overflow-x:auto;">
-        <table class="results-table" style="min-width:700px;">
-          <thead>
-            <tr>
-              <th>Pos</th>
-              <th>Name</th>
-              <th>Div</th>
-              <th>R1<br/><small>17/6</small></th>
-              <th>R2<br/><small>17/6</small></th>
-              <th>R3<br/><small>1/7</small></th>
-              <th>R4<br/><small>1/7</small></th>
-              <th>R5<br/><small>1/7</small></th>
-              <th>R6<br/><small>22/7</small></th>
-              <th>R7<br/><small>22/7</small></th>
-              <th>R8<br/><small>19/8</small></th>
-              <th>R9<br/><small>19/8</small></th>
-              <th>R10<br/><small>19/8</small></th>
-              <th>Nett</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td><span class="pos-badge gold">1</span></td>
-              <td><strong>Ben LS</strong></td><td>Staff</td>
-              <td class="discarded">18 DNC</td><td class="discarded">18 DNC</td><td class="discarded">11 NSC</td>
-              <td>1</td><td>1</td><td>1</td><td>1</td><td>2</td><td>2</td><td>2</td>
-              <td><span class="score-chip nett">10</span></td>
-            </tr>
-            <tr>
-              <td><span class="pos-badge silver">2</span></td>
-              <td><strong>Rich S</strong></td><td>Staff</td>
-              <td>3</td><td>3</td><td>3</td><td class="discarded">9</td><td>6</td>
-              <td class="discarded">18 DNC</td><td class="discarded">18 DNC</td><td>3</td><td>4</td><td>3</td>
-              <td><span class="score-chip nett">25</span></td>
-            </tr>
-            <tr>
-              <td><span class="pos-badge bronze">3</span></td>
-              <td><strong>Loz</strong></td><td>Visitor</td>
-              <td>4</td><td>11 NSC</td><td>2</td><td>3</td><td>3</td><td>2</td><td>2</td>
-              <td class="discarded">18 DNC</td><td class="discarded">18 DNC</td><td class="discarded">18 DNC</td>
-              <td><span class="score-chip nett">27</span></td>
-            </tr>
-            <tr>
-              <td><span class="pos-badge">4</span></td>
-              <td><strong>Simon</strong></td><td>Staff</td>
-              <td>2</td><td>2</td><td class="discarded">11 DNF</td><td>6</td><td>2</td>
-              <td class="discarded">18 DNC</td><td class="discarded">18 DNC</td><td>5</td><td>5</td><td>6</td>
-              <td><span class="score-chip nett">28</span></td>
-            </tr>
-            <tr>
-              <td><span class="pos-badge">5</span></td>
-              <td><strong>Luke H</strong></td><td>Staff</td>
-              <td>6</td><td>4</td><td class="discarded">18 DNC</td><td class="discarded">18 DNC</td><td class="discarded">18 DNC</td>
-              <td>7</td><td>3</td><td>7</td><td>3</td><td>4</td>
-              <td><span class="score-chip nett">34</span></td>
-            </tr>
-            <tr>
-              <td><span class="pos-badge">6</span></td>
-              <td><strong>Harry</strong></td><td>Staff</td>
-              <td>5</td><td>5</td><td>4</td><td>5</td><td>5</td>
-              <td class="discarded">18 DNC</td><td class="discarded">18 DNC</td><td>4</td><td class="discarded">8 DSQ</td><td>7</td>
-              <td><span class="score-chip nett">35</span></td>
-            </tr>
-            <tr>
-              <td><span class="pos-badge">7</span></td>
-              <td><strong>Joe F</strong></td><td>Visitor</td>
-              <td>1</td><td>1</td><td>1</td><td>2</td><td>4</td>
-              <td class="discarded">18 DNC</td><td class="discarded">18 DNC</td><td class="discarded">18 DNC</td><td>18 DNC</td><td>18 DNC</td>
-              <td><span class="score-chip nett">45</span></td>
-            </tr>
-            <tr>
-              <td><span class="pos-badge">8</span></td>
-              <td><strong>Melissa</strong></td><td>Staff</td>
-              <td class="discarded">9</td><td>9</td><td>7.86 WRK</td><td>7.86 WRK</td><td>7.86 WRK</td>
-              <td class="discarded">10 DNS</td><td class="discarded">10 DNS</td><td>6</td><td>6</td><td>5</td>
-              <td><span class="score-chip nett">49.58</span></td>
-            </tr>
-            <tr>
-              <td><span class="pos-badge">9</span></td>
-              <td><strong>Izzy</strong></td><td>Staff</td>
-              <td>7</td><td>8</td><td>8</td><td>8</td><td>8</td><td>8</td>
-              <td class="discarded">10 DNS</td><td class="discarded">8.14 WRK</td><td class="discarded">8.14 WRK</td><td>8.14 WRK</td>
-              <td><span class="score-chip nett">55.14</span></td>
-            </tr>
-            <tr>
-              <td><span class="pos-badge">10</span></td>
-              <td><strong>Jazzy</strong></td><td>Staff</td>
-              <td>11.33 RDGa</td><td>6</td><td class="discarded">18 DNC</td><td class="discarded">18 DNC</td><td class="discarded">18 DNC</td>
-              <td>4</td><td>4 RDG</td><td>11.33 WRK</td><td>11.33 WRK</td><td>11.33 WRK</td>
-              <td><span class="score-chip nett">59.32</span></td>
-            </tr>
-            <tr>
-              <td><span class="pos-badge">11</span></td>
-              <td><strong>Anton</strong></td><td>Staff</td>
-              <td>8</td><td>7</td><td>12.14 WRK</td><td>12.14 WRK</td><td>12.14 WRK</td>
-              <td>6</td><td>10 DSQ</td>
-              <td class="discarded">18 DNC</td><td class="discarded">18 DNC</td><td class="discarded">18 DNC</td>
-              <td><span class="score-chip nett">67.42</span></td>
-            </tr>
-            <tr>
-              <td><span class="pos-badge">12</span></td>
-              <td><strong>Sophie T</strong></td><td>Visitor</td>
-              <td class="discarded">18 DNC</td><td class="discarded">18 DNC</td><td class="discarded">18 DNC</td>
-              <td>18 DNC</td><td>18 DNC</td><td>18 DNC</td><td>18 DNC</td><td>1</td><td>1</td><td>1</td>
-              <td><span class="score-chip nett">75</span></td>
-            </tr>
-            <tr>
-              <td><span class="pos-badge">13</span></td>
-              <td><strong>Eric</strong></td><td>Staff</td>
-              <td class="discarded">18 DNC</td><td class="discarded">18 DNC</td><td>7</td><td>11 DNF</td><td>7</td>
-              <td class="discarded">18 DNC</td><td>18 DNC</td><td>13.86 WRK</td><td>13.86 WRK</td><td>13.86 WRK</td>
-              <td><span class="score-chip nett">84.58</span></td>
-            </tr>
-            <tr>
-              <td><span class="pos-badge">14</span></td>
-              <td><strong>Ben W</strong></td><td>Visitor</td>
-              <td class="discarded">18 DNC</td><td class="discarded">18 DNC</td><td>5</td><td>4</td><td>11 DNS</td>
-              <td class="discarded">18 DNC</td><td>18 DNC</td><td>18 DNC</td><td>18 DNC</td><td>18 DNC</td>
-              <td><span class="score-chip nett">92</span></td>
-            </tr>
-            <tr>
-              <td><span class="pos-badge">15</span></td>
-              <td><strong>Pheobe</strong></td><td>Staff</td>
-              <td class="discarded">18 DNC</td><td class="discarded">18 DNC</td><td>14.71 WRK</td><td>14.71 WRK</td><td>14.71 WRK</td>
-              <td>3</td><td>10 RET</td><td class="discarded">18 DNC</td><td>18 DNC</td><td>18 DNC</td>
-              <td><span class="score-chip nett">93.13</span></td>
-            </tr>
-            <tr>
-              <td><span class="pos-badge">16</span></td>
-              <td><strong>Bex</strong></td><td>Staff</td>
-              <td class="discarded">18 DNC</td><td class="discarded">18 DNC</td><td>6</td><td>7</td><td>11 DNS</td>
-              <td class="discarded">18 DNC</td><td>18 DNC</td><td>18 DNC</td><td>18 DNC</td><td>18 DNC</td>
-              <td><span class="score-chip nett">96</span></td>
-            </tr>
-            <tr>
-              <td><span class="pos-badge">17</span></td>
-              <td><strong>Jack H</strong></td><td>Staff</td>
-              <td class="discarded">18 DNC</td><td class="discarded">18 DNC</td><td class="discarded">18 DNC</td>
-              <td>18 DNC</td><td>18 DNC</td><td>5</td><td>4</td>
-              <td>18 DNC</td><td>18 DNC</td><td>18 DNC</td>
-              <td><span class="score-chip nett">99</span></td>
-            </tr>
-          </tbody>
-        </table>
-        <p style="font-size:0.78rem; color: var(--muted); margin-top: 1rem;">Discarded scores shown struck through. DNC = Did Not Compete · DNF = Did Not Finish · DNS = Did Not Start · DSQ = Disqualified · WRK = Work commitment · RDG = Redress · NSC = Did Not Sail Course · RET = Retired</p>
-      </div>
+    <div class="tabs">
+      <button class="tab-btn active" onclick="showTab('2025-overall')">Overall</button>
+      <button class="tab-btn" onclick="showTab('2025-series1')">Series 1</button>
+      <button class="tab-btn" onclick="showTab('2025-series2')">Series 2</button>
+      <button class="tab-btn" onclick="showTab('2025-series3')">Series 3</button>
     </div>
 
-    <div class="card" style="margin-top:1rem;">
-      <div class="card-header">
-        <span class="card-header-title">2025 Prize Winners</span>
+    <div id="tab-2025-overall" class="tab-panel active">
+      <div class="card">
+        <div class="card-header"><span class="card-header-title">2025 Overall</span><span class="badge">Season complete</span></div>
+        <div class="card-body" id="body-2025-overall">
+          <div class="loading"><div class="loading-spinner"></div><p>Loading...</p></div>
+        </div>
       </div>
-      <div class="card-body">
-        <table class="results-table">
-          <thead><tr><th>Category</th><th>1st</th><th>2nd</th><th>3rd</th></tr></thead>
-          <tbody>
-            <tr><td><strong>Overall</strong></td><td>Ben LS</td><td>Rich S</td><td>Loz</td></tr>
-            <tr><td><strong>Staff</strong></td><td>Ben LS</td><td>Rich S</td><td>Simon</td></tr>
-            <tr><td><strong>Female</strong></td><td>Melissa</td><td>Izzy</td><td>Jazzy</td></tr>
-            <tr><td><strong>Non-DI</strong></td><td>Luke H</td><td>Melissa</td><td>Izzy</td></tr>
-          </tbody>
-        </table>
+    </div>
+    <div id="tab-2025-series1" class="tab-panel">
+      <div class="card">
+        <div class="card-header"><span class="card-header-title">2025 Series 1</span></div>
+        <div class="card-body" id="body-2025-series1">
+          <div class="loading"><div class="loading-spinner"></div><p>Loading...</p></div>
+        </div>
+      </div>
+    </div>
+    <div id="tab-2025-series2" class="tab-panel">
+      <div class="card">
+        <div class="card-header"><span class="card-header-title">2025 Series 2</span></div>
+        <div class="card-body" id="body-2025-series2">
+          <div class="loading"><div class="loading-spinner"></div><p>Loading...</p></div>
+        </div>
+      </div>
+    </div>
+    <div id="tab-2025-series3" class="tab-panel">
+      <div class="card">
+        <div class="card-header"><span class="card-header-title">2025 Series 3</span></div>
+        <div class="card-body" id="body-2025-series3">
+          <div class="loading"><div class="loading-spinner"></div><p>Loading...</p></div>
+        </div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- ══════════════════════════════════════════════════
-     RACE DATES PAGE
-══════════════════════════════════════════════════ -->
 <div id="page-dates" class="page">
   <div class="hero" style="padding: 2.5rem 1.5rem 2rem;">
     <div class="hero-eyebrow">2026 Season</div>
@@ -1047,69 +915,64 @@
 
   // ── API CONFIG ─────────────────────────────────────────────────
   const API = 'https://calshot-racing-api.doug-reid-21.workers.dev';
+  const YEAR = '2026';
 
   // ── SAILWAVE HTML PARSER ────────────────────────────────────────
-  // Parses Sailwave exported HTML into structured data
   function parseSailwaveHTML(html) {
     const parser = new DOMParser();
     const doc = parser.parseFromString(html, 'text/html');
-
-    // Extract series info from caption
     const caption = doc.querySelector('.summarycaption, .caption.summarycaption');
     const captionText = caption ? caption.textContent : '';
-    const sailed = captionText.match(/Sailed:\s*(\d+)/)?.[1] || '?';
+    const sailed   = captionText.match(/Sailed:\s*(\d+)/)?.[1] || '?';
     const discards = captionText.match(/Discards:\s*(\d+)/)?.[1] || '0';
-    const entries = captionText.match(/Entries:\s*(\d+)/)?.[1] || '?';
-
-    // Extract headers (race columns with dates)
+    const entries  = captionText.match(/Entries:\s*(\d+)/)?.[1] || '?';
     const headerRow = doc.querySelector('.summarytable thead tr, .titlerow');
     const headers = [];
-    if (headerRow) {
-      headerRow.querySelectorAll('th').forEach((th, i) => {
-        const text = th.innerText || th.textContent;
-        headers.push(text.trim().replace(/\n/g, ' '));
-      });
-    }
-
-    // Find race column indices (skip name, division, sex columns)
+    if (headerRow) headerRow.querySelectorAll('th').forEach(th => {
+      headers.push(th.innerText || th.textContent);
+    });
     const raceStartIdx = headers.findIndex(h => /^R\d+/.test(h.trim()));
-
-    // Extract rows
     const rows = [];
     doc.querySelectorAll('.summaryrow').forEach(tr => {
       const cells = tr.querySelectorAll('td');
       if (cells.length < 3) return;
-      const row = {
-        name: cells[0].textContent.trim(),
-        division: cells[1].textContent.trim(),
-        sex: cells[2].textContent.trim(),
-        races: [],
-        total: '',
-        nett: '',
-      };
+      const row = { name:cells[0].textContent.trim(), division:cells[1].textContent.trim(), sex:cells[2].textContent.trim(), races:[], total:'', nett:'' };
       cells.forEach((td, i) => {
         if (i < raceStartIdx) return;
         const text = td.textContent.trim();
-        const isDiscard = td.textContent.includes('(') || 
-                          (td.parentElement && td.parentElement.querySelector('td:nth-child(' + (i+1) + ')') && 
-                           td.textContent.startsWith('('));
-        if (i === cells.length - 1) {
-          row.nett = text;
-        } else if (i === cells.length - 2) {
-          row.total = text;
-        } else {
-          const discarded = td.textContent.trim().startsWith('(');
-          const clean = text.replace(/^\(|\)$/g, '').trim();
-          row.races.push({ score: clean, discarded });
-        }
+        const discarded = text.startsWith('(');
+        if (i === cells.length - 1) row.nett = text;
+        else if (i === cells.length - 2) row.total = text;
+        else row.races.push({ score: text.replace(/^\(|\)$/g,''), discarded });
       });
       rows.push(row);
     });
-
-    // Extract race headers (dates)
     const raceHeaders = headers.slice(raceStartIdx, headers.length - 2);
-
     return { sailed, discards, entries, raceHeaders, rows, captionText };
+  }
+
+  // ── RACE COLUMN HIGHLIGHTING ────────────────────────────────────
+  // Returns per-column arrays of positions for highlighting
+  // Ignores penalty codes (DNC, DNS, DSQ, WRK, RET, DNF, NSC, OCS, RDG etc)
+  const PENALTY_CODES = /DNC|DNS|DSQ|WRK|RET|DNF|NSC|OCS|RDG|BFD|UFD/i;
+
+  function getRaceHighlights(rows) {
+    if (!rows || !rows.length) return [];
+    const numRaces = rows[0].races.length;
+    const highlights = [];
+    for (let r = 0; r < numRaces; r++) {
+      // Collect numeric scores for this race column
+      const scores = rows.map(row => {
+        const race = row.races[r];
+        if (!race || race.discarded || PENALTY_CODES.test(race.score)) return null;
+        const num = parseFloat(race.score);
+        return isNaN(num) ? null : num;
+      });
+      // Find 1st, 2nd, 3rd unique values
+      const unique = [...new Set(scores.filter(s => s !== null))].sort((a,b) => a-b);
+      highlights.push({ first: unique[0], second: unique[1], third: unique[2], scores });
+    }
+    return highlights;
   }
 
   // ── RENDER RESULTS TABLE ────────────────────────────────────────
@@ -1117,31 +980,36 @@
     if (!data || !data.rows || data.rows.length === 0) {
       return '<div class="placeholder"><div class="placeholder-icon">⛵</div><p>No results yet — check back after the first racing evening.</p></div>';
     }
-
-    const showRaces = !compact;
+    const highlights = compact ? [] : getRaceHighlights(data.rows);
     let html = '<div style="overflow-x:auto;">';
-    html += '<table class="results-table" style="' + (showRaces ? 'min-width:600px;' : '') + '">';
-    html += '<thead><tr>';
-    html += '<th>Pos</th><th>Name</th><th>Div</th>';
-    if (showRaces) {
+    html += '<table class="results-table" style="' + (!compact ? 'min-width:600px;' : '') + '">';
+    html += '<thead><tr><th>Pos</th><th>Name</th><th>Div</th>';
+    if (!compact) {
       data.raceHeaders.forEach(h => {
-        const parts = h.split(' ');
-        const rNum = parts[0];
-        const date = parts.slice(1).join(' ');
-        html += '<th>' + rNum + (date ? '<br/><small>' + date + '</small>' : '') + '</th>';
+        const parts = h.trim().split(/\s+/);
+        html += '<th>' + parts[0] + (parts[1] ? '<br/><small>' + parts.slice(1).join(' ') + '</small>' : '') + '</th>';
       });
     }
     html += '<th>Nett</th></tr></thead><tbody>';
 
     data.rows.forEach((row, i) => {
-      const posClass = i === 0 ? 'gold' : i === 1 ? 'silver' : i === 2 ? 'bronze' : '';
+      const posClass = i===0?'gold':i===1?'silver':i===2?'bronze':'';
       html += '<tr>';
-      html += '<td><span class="pos-badge ' + posClass + '">' + (i + 1) + '</span></td>';
-      html += '<td><strong>' + row.name + '</strong></td>';
-      html += '<td>' + row.division + '</td>';
-      if (showRaces) {
-        row.races.forEach(r => {
-          html += '<td class="' + (r.discarded ? 'discarded' : '') + '">' + r.score + '</td>';
+      html += '<td><span class="pos-badge ' + posClass + '">' + (i+1) + '</span></td>';
+      html += '<td><strong>' + row.name + '</strong></td><td>' + row.division + '</td>';
+      if (!compact) {
+        row.races.forEach((r, ri) => {
+          const h = highlights[ri];
+          let bg = '';
+          if (h && !r.discarded && !PENALTY_CODES.test(r.score)) {
+            const num = parseFloat(r.score);
+            if (!isNaN(num)) {
+              if (num === h.first)  bg = 'background:#b8860b;color:#fff;font-weight:700;';
+              else if (num === h.second) bg = 'background:#4a6fa5;color:#fff;font-weight:700;';
+              else if (num === h.third)  bg = 'background:#8b4513;color:#fff;font-weight:700;';
+            }
+          }
+          html += '<td class="' + (r.discarded?'discarded':'') + '" style="' + bg + '">' + r.score + '</td>';
         });
       }
       html += '<td><span class="score-chip nett">' + row.nett + '</span></td>';
@@ -1150,126 +1018,142 @@
 
     html += '</tbody></table>';
     html += '<p style="font-size:0.75rem;color:var(--muted);margin-top:0.75rem;">';
-    html += data.sailed + ' races sailed · ' + data.discards + ' discards · ' + data.entries + ' entries';
-    if (showRaces) html += ' · Struck-through scores are discarded';
+    html += data.sailed + ' races · ' + data.discards + ' discards · ' + data.entries + ' entries';
+    if (!compact) html += ' · Gold=1st · Blue=2nd · Bronze=3rd per race';
     html += '</p></div>';
     return html;
   }
 
-  // ── FETCH FROM API ──────────────────────────────────────────────
+  // ── FETCH HELPERS ───────────────────────────────────────────────
   async function fetchFile(key) {
     try {
       const res = await fetch(API + '/file/' + encodeURIComponent(key));
       if (!res.ok) return null;
       const json = await res.json();
-      return json.html || null;
-    } catch (e) {
-      return null;
-    }
+      return json.content || null;
+    } catch(e) { return null; }
   }
 
-  function setHTML(id, html) {
-    const el = document.getElementById(id);
-    if (el) el.innerHTML = html;
-  }
-
-  function errorHTML(msg) {
-    return '<div class="error-msg">⚠ ' + msg + '</div>';
-  }
+  function setHTML(id, html) { const el = document.getElementById(id); if (el) el.innerHTML = html; }
+  function errorHTML(msg) { return '<div class="error-msg">⚠ ' + msg + '</div>'; }
 
   // ── LOAD HOME PAGE ──────────────────────────────────────────────
   async function loadHome() {
-    // Latest evening
+    // Latest evening or special
     try {
-      const res = await fetch(API + '/evenings');
-      const evenings = await res.json();
-      if (evenings && evenings.length > 0) {
-        const latest = evenings[0];
-        const html = await fetchFile(latest.key);
-        if (html) {
-          const data = parseSailwaveHTML(html);
-          const dateStr = latest.date.split('-').reverse().join('/');
-          document.querySelector('[data-latest-date]') && 
-            (document.querySelector('[data-latest-date]').textContent = dateStr);
-          setHTML('home-latest-body', renderResultsTable(data, false));
-        } else {
-          setHTML('home-latest-body', '<div class="placeholder"><div class="placeholder-icon">🏁</div><p>No evening results uploaded yet.</p></div>');
-        }
+      const res = await fetch(API + '/latest?year=' + YEAR);
+      const data = await res.json();
+      if (data && data.content) {
+        const parsed = parseSailwaveHTML(data.content);
+        document.querySelector('.card-header-title') &&
+          (document.querySelector('[data-latest-label]') || true);
+        setHTML('home-latest-body', renderResultsTable(parsed, false));
       } else {
-        setHTML('home-latest-body', '<div class="placeholder"><div class="placeholder-icon">🏁</div><p>No evening results uploaded yet. Check back after 14 April.</p></div>');
+        setHTML('home-latest-body', '<div class="placeholder"><div class="placeholder-icon">🏁</div><p>No results yet. Check back after 14 April.</p></div>');
       }
-    } catch(e) {
-      setHTML('home-latest-body', errorHTML('Could not load latest results.'));
-    }
+    } catch(e) { setHTML('home-latest-body', errorHTML('Could not load latest results.')); }
 
-    // Current series — try series1 first, then 2, then 3
-    let currentSeries = null;
-    let currentKey = null;
-    for (const key of ['series1.html', 'series2.html', 'series3.html']) {
-      const html = await fetchFile(key);
-      if (html) { currentSeries = html; currentKey = key; }
+    // Current series
+    let currentHtml = null, currentKey = null;
+    for (const s of ['series1','series2','series3']) {
+      const h = await fetchFile(s + '_' + YEAR + '.html');
+      if (h) { currentHtml = h; currentKey = s; }
     }
-    if (currentSeries) {
-      const data = parseSailwaveHTML(currentSeries);
-      const label = currentKey.replace('.html','').replace('series','Series ');
+    if (currentHtml) {
+      const parsed = parseSailwaveHTML(currentHtml);
+      const label = currentKey.replace('series','Series ');
       document.getElementById('home-series-title').textContent = label + ' Standings';
-      document.getElementById('home-series-badge').textContent = data.sailed + ' races sailed';
-      setHTML('home-series-body', renderResultsTable(data, true));
+      document.getElementById('home-series-badge').textContent = parsed.sailed + ' races sailed';
+      setHTML('home-series-body', renderResultsTable(parsed, true));
     } else {
       document.getElementById('home-series-badge').textContent = 'Not yet started';
       setHTML('home-series-body', '<div class="placeholder"><div class="placeholder-icon">📊</div><p>Series standings will appear here after the first evening.</p></div>');
     }
 
     // Overall
-    const overallHtml = await fetchFile('overall.html');
+    const overallHtml = await fetchFile('overall_' + YEAR + '.html');
     if (overallHtml) {
-      const data = parseSailwaveHTML(overallHtml);
-      document.getElementById('home-overall-badge').textContent = data.sailed + ' races sailed';
-      setHTML('home-overall-body', renderResultsTable(data, true));
+      const parsed = parseSailwaveHTML(overallHtml);
+      document.getElementById('home-overall-badge').textContent = parsed.sailed + ' races sailed';
+      setHTML('home-overall-body', renderResultsTable(parsed, true));
     } else {
       document.getElementById('home-overall-badge').textContent = 'Season in progress';
-      setHTML('home-overall-body', '<div class="placeholder"><div class="placeholder-icon">🥇</div><p>Overall standings will appear here once results are uploaded.</p></div>');
+      setHTML('home-overall-body', '<div class="placeholder"><div class="placeholder-icon">🥇</div><p>Overall standings will appear once results are uploaded.</p></div>');
     }
   }
 
   // ── LOAD SERIES TAB ─────────────────────────────────────────────
-  async function loadSeriesTab(key, bodyId) {
-    const html = await fetchFile(key + '.html');
-    if (html) {
-      const data = parseSailwaveHTML(html);
-      setHTML(bodyId, renderResultsTable(data, false));
-    } else {
-      setHTML(bodyId, '<div class="placeholder"><div class="placeholder-icon">⛵</div><p>No results uploaded yet for this series.</p></div>');
+  async function loadSeriesTab(type, bodyId, year) {
+    const y = year || YEAR;
+    const html = await fetchFile(type + '_' + y + '.html');
+    if (html) setHTML(bodyId, renderResultsTable(parseSailwaveHTML(html), false));
+    else setHTML(bodyId, '<div class="placeholder"><div class="placeholder-icon">⛵</div><p>No results uploaded yet for this series.</p></div>');
+  }
+
+  // ── LOAD SPECIAL RACES TAB ──────────────────────────────────────
+  async function loadSpecialsTab(year) {
+    const y = year || YEAR;
+    const container = document.getElementById('specials-container');
+    if (!container) return;
+    container.innerHTML = '<div class="loading"><div class="loading-spinner"></div><p>Loading...</p></div>';
+    try {
+      const res = await fetch(API + '/specials?year=' + y);
+      const specials = await res.json();
+      if (!specials || !specials.length) {
+        container.innerHTML = '<div class="card"><div class="card-body"><div class="placeholder"><div class="placeholder-icon">🚩</div><p>No Special Races...Yet</p></div></div></div>';
+        return;
+      }
+      let html = '';
+      for (const sp of specials) {
+        const fileHtml = await fetchFile(sp.key);
+        if (!fileHtml) continue;
+        const data = parseSailwaveHTML(fileHtml);
+        html += '<div class="card" style="margin-bottom:1.5rem;">';
+        html += '<div class="card-header"><span class="card-header-title">' + sp.displayName + '</span><span class="badge">' + data.sailed + ' races · ' + data.entries + ' entries</span></div>';
+        html += '<div class="card-body">' + renderResultsTable(data, false) + '</div>';
+        html += '</div>';
+      }
+      container.innerHTML = html || '<div class="card"><div class="card-body"><div class="placeholder"><div class="placeholder-icon">🚩</div><p>No Special Races...Yet</p></div></div></div>';
+    } catch(e) {
+      container.innerHTML = errorHTML('Could not load special races.');
+    }
+  }
+
+  // ── LOAD 2025 PAGE ──────────────────────────────────────────────
+  async function load2025() {
+    const types = ['series1','series2','series3','overall'];
+    for (const t of types) {
+      const bodyId = 'body-2025-' + t;
+      const el = document.getElementById(bodyId);
+      if (!el) continue;
+      el.innerHTML = '<div class="loading"><div class="loading-spinner"></div><p>Loading...</p></div>';
+      const html = await fetchFile(t + '_2025.html');
+      if (html) el.innerHTML = renderResultsTable(parseSailwaveHTML(html), t !== 'overall');
+      else el.innerHTML = '<div class="placeholder"><div class="placeholder-icon">📋</div><p>Not yet uploaded.</p></div>';
     }
   }
 
   // ── LOAD EVENINGS LIST ──────────────────────────────────────────
   async function loadEveningsList() {
     try {
-      const res = await fetch(API + '/evenings');
+      const res = await fetch(API + '/evenings?year=' + YEAR);
       const evenings = await res.json();
-      // Update dates list — match date links
-      if (!evenings || evenings.length === 0) return;
+      if (!evenings || !evenings.length) return;
       evenings.forEach(ev => {
-        // Find the li with matching date and update its links
-        const dateFormatted = ev.date; // YYYY-MM-DD
-        const parts = dateFormatted.split('-');
-        const displayDate = parseInt(parts[2]) + ' ' + 
-          ['January','February','March','April','May','June',
-           'July','August','September','October','November','December'][parseInt(parts[1])-1] + 
+        const parts = ev.date.split('-');
+        const displayDate = parseInt(parts[2]) + ' ' +
+          ['January','February','March','April','May','June','July','August','September','October','November','December'][parseInt(parts[1])-1] +
           ' ' + parts[0];
-        // Find matching date label
         document.querySelectorAll('.date-label').forEach(el => {
           if (el.textContent.includes(displayDate)) {
             const linksDiv = el.parentElement.querySelector('.date-links');
-            if (linksDiv) {
-              linksDiv.innerHTML = 
-                '<button class="pill-btn results" onclick="showEvening(\'' + ev.key + '\')">Results</button>';
+            if (linksDiv && linksDiv.querySelector('.pill-btn.tbc')) {
+              linksDiv.innerHTML = '<button class="pill-btn results" onclick="showEvening(\'' + ev.key + '\')">Results</button>';
             }
           }
         });
       });
-    } catch(e) { /* silently fail */ }
+    } catch(e) {}
   }
 
   // ── SHOW INDIVIDUAL EVENING ─────────────────────────────────────
@@ -1277,34 +1161,29 @@
     showPage('evening');
     setHTML('evening-body', '<div class="loading"><div class="loading-spinner"></div><p>Loading results...</p></div>');
     const dateMatch = key.match(/evening_(\d{4}-\d{2}-\d{2})/);
-    const parts = dateMatch ? dateMatch[1].split('-') : [];
-    const displayDate = parts.length === 3 ? 
-      parseInt(parts[2]) + ' ' + ['January','February','March','April','May','June',
-       'July','August','September','October','November','December'][parseInt(parts[1])-1] + 
-      ' ' + parts[0] : key;
+    let displayDate = key;
+    if (dateMatch) {
+      const parts = dateMatch[1].split('-');
+      displayDate = parseInt(parts[2]) + ' ' +
+        ['January','February','March','April','May','June','July','August','September','October','November','December'][parseInt(parts[1])-1] +
+        ' ' + parts[0];
+    }
     document.getElementById('evening-title').textContent = displayDate;
     const html = await fetchFile(key);
-    if (html) {
-      const data = parseSailwaveHTML(html);
-      setHTML('evening-body', renderResultsTable(data, false));
-    } else {
-      setHTML('evening-body', errorHTML('Could not load results for this evening.'));
-    }
+    setHTML('evening-body', html ? renderResultsTable(parseSailwaveHTML(html), false) : errorHTML('Could not load results for this evening.'));
   }
 
-  // ── PAGE LIFECYCLE ──────────────────────────────────────────────
+    // ── PAGE LIFECYCLE ──────────────────────────────────────────────
   const pageLoaders = {
     home: loadHome,
     results2026: () => {
-      loadSeriesTab('series1', 'tab-body-series1');
-      loadSeriesTab('series2', 'tab-body-series2');
-      loadSeriesTab('series3', 'tab-body-series3');
-      const key = 'overall';
-      fetchFile(key + '.html').then(html => {
-        if (html) setHTML('tab-body-overall', renderResultsTable(parseSailwaveHTML(html), false));
-        else setHTML('tab-body-overall', '<div class="placeholder"><div class="placeholder-icon">🏆</div><p>Overall standings not yet available.</p></div>');
-      });
+      loadSeriesTab('series1', 'tab-body-series1', YEAR);
+      loadSeriesTab('series2', 'tab-body-series2', YEAR);
+      loadSeriesTab('series3', 'tab-body-series3', YEAR);
+      loadSeriesTab('overall', 'tab-body-overall', YEAR);
+      loadSpecialsTab(YEAR);
     },
+    results2025: () => load2025(),
     dates: loadEveningsList,
   };
 
