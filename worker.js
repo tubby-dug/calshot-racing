@@ -38,7 +38,8 @@ function validKey(key) {
          /^evening_\d{4}-\d{2}-\d{2}\.html$/.test(key) ||
          /^special_\d{4}_\d{2}\.html$/.test(key) ||
          /^special_\d{4}_\d{2}\.meta\.json$/.test(key) ||
-         /^SIs_\d{4}\.pdf$/.test(key);
+         /^SIs_\d{4}\.pdf$/.test(key) ||
+         key === 'sailwave_links.json';
 }
 
 export default {
@@ -222,6 +223,46 @@ export default {
     if (path === '/verify-password' && request.method === 'POST') {
       if (!checkAuth(request, env)) return json({ error: 'Unauthorised' }, 401, origin);
       return json({ success: true }, 200, origin);
+    }
+
+    // GET /sailwave-links — return the full links map
+    if (path === '/sailwave-links' && request.method === 'GET') {
+      try {
+        const obj = await env.RACING_BUCKET.get('sailwave_links.json');
+        if (!obj) return json({}, 200, origin);
+        const data = JSON.parse(await obj.text());
+        return json(data, 200, origin);
+      } catch(e) { return json({}, 200, origin); }
+    }
+
+    // POST /sailwave-links — save or delete a single link
+    // Body: { key: "evening_2026-04-14", url: "https://..." }
+    // To delete, omit url or pass url: ""
+    if (path === '/sailwave-links' && request.method === 'POST') {
+      if (!checkAuth(request, env)) return json({ error: 'Unauthorised' }, 401, origin);
+      try {
+        const body = await request.json();
+        const { key, url } = body;
+        if (!key) return json({ error: 'Missing key' }, 400, origin);
+
+        // Load existing links
+        let links = {};
+        try {
+          const obj = await env.RACING_BUCKET.get('sailwave_links.json');
+          if (obj) links = JSON.parse(await obj.text());
+        } catch(e) {}
+
+        if (url && url.trim()) {
+          links[key] = url.trim();
+        } else {
+          delete links[key];
+        }
+
+        await env.RACING_BUCKET.put('sailwave_links.json', JSON.stringify(links), {
+          httpMetadata: { contentType: 'application/json' },
+        });
+        return json({ success: true, links }, 200, origin);
+      } catch(e) { return json({ error: 'Failed: ' + e.message }, 500, origin); }
     }
 
     return json({ error: 'Not found' }, 404, origin);
