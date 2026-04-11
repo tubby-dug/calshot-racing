@@ -199,6 +199,69 @@
     </div>
 
     <div class="card">
+      <div class="card-header">
+        <span>Sailwave Links</span>
+        <button class="btn btn-ghost btn-small" onclick="loadSailwaveLinks()">↻ Refresh</button>
+      </div>
+      <div class="card-body">
+        <div id="sw-status" class="status"></div>
+
+        <div class="form-row">
+          <div>
+            <label class="form-label">Type</label>
+            <select class="form-select" id="sw-type" onchange="onSWTypeChange()">
+              <option value="">— Select type —</option>
+              <option value="series1">Series 1</option>
+              <option value="series2">Series 2</option>
+              <option value="series3">Series 3</option>
+              <option value="overall">Overall</option>
+              <option value="evening">Individual Evening</option>
+              <option value="special">Special Race</option>
+            </select>
+          </div>
+          <div>
+            <label class="form-label">Year</label>
+            <select class="form-select" id="sw-year">
+              <option value="2026">2026</option>
+              <option value="2025">2025</option>
+              <option value="2027">2027</option>
+              <option value="2028">2028</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group hidden" id="sw-date-group">
+          <label class="form-label">Evening Date</label>
+          <input type="date" class="form-input" id="sw-date" />
+        </div>
+
+        <div class="form-group hidden" id="sw-special-group">
+          <label class="form-label">Special Race Number</label>
+          <select class="form-select" id="sw-special-num">
+            <option value="01">Special 01</option>
+            <option value="02">Special 02</option>
+            <option value="03">Special 03</option>
+            <option value="04">Special 04</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Sailwave URL</label>
+          <input type="url" class="form-input" id="sw-url" placeholder="https://sailwave.com/publish/..." />
+        </div>
+
+        <div style="display:flex; gap:0.75rem; flex-wrap:wrap;">
+          <button class="btn btn-primary" onclick="saveSailwaveLink()">Save Link</button>
+        </div>
+
+        <div class="divider" style="margin-top:1.5rem;">Saved Links</div>
+        <ul class="file-list" id="sw-link-list">
+          <li class="empty-list"><span class="spinner"></span> Loading...</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="card">
         <button class="btn btn-ghost btn-small" onclick="loadFileList()">↻ Refresh</button>
       </div>
       <div class="card-body">
@@ -237,6 +300,7 @@ async function login() {
       document.getElementById('password-input').value = '';
       s.className = 'status';
       loadFileList();
+      loadSailwaveLinks();
     } else { s.textContent = 'Incorrect password.'; s.className = 'status error visible'; }
   } catch(e) { s.textContent = 'Could not reach server.'; s.className = 'status error visible'; }
 }
@@ -319,7 +383,11 @@ async function previewFile() {
   const tbody = document.getElementById('preview-tbody');
   const maxShow = 5;
   thead.innerHTML = '<tr><th>Pos</th><th>Name</th><th>Div</th>' +
-    data.raceHeaders.slice(0, maxShow).map(h => '<th>' + h.split(' ')[0] + '</th>').join('') +
+    data.raceHeaders.slice(0, maxShow).map(h => {
+      const m = h.trim().match(/^(R\d+)(\d{1,2})\/(\d{1,2})\/(\d{2,4})$/);
+      if (m) return '<th style="white-space:nowrap;"><strong>' + m[1] + '</strong> <small>' + m[2].padStart(2,'0') + '/' + m[3].padStart(2,'0') + '/' + m[4].slice(-2) + '</small></th>';
+      return '<th>' + h.split(' ')[0] + '</th>';
+    }).join('') +
     (data.raceHeaders.length > maxShow ? '<th>+' + (data.raceHeaders.length - maxShow) + '</th>' : '') +
     '<th>Nett</th></tr>';
   tbody.innerHTML = data.rows.map((row, i) =>
@@ -338,6 +406,23 @@ async function previewFile() {
 
 async function confirmUpload() {
   if (!pendingFile || !pendingKey) return;
+
+  // Check if the key already exists in R2 and warn before overwriting
+  try {
+    const listRes = await fetch(API + '/files');
+    const files = await listRes.json();
+    const existing = Array.isArray(files) && files.find(f => f.key === pendingKey);
+    if (existing) {
+      const uploaded = new Date(existing.uploaded).toLocaleString('en-GB', {
+        day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit'
+      });
+      const ok = confirm('⚠ "' + pendingKey + '" already exists in R2 (uploaded ' + uploaded + ').\n\nOverwrite it?');
+      if (!ok) return;
+    }
+  } catch(e) {
+    // If we can't check, proceed anyway — upload won't be blocked
+  }
+
   const btn = document.getElementById('confirm-btn');
   btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> Uploading...';
   try {
@@ -469,6 +554,110 @@ function parseSailwave(html) {
   return { sailed, discards, entries, raceHeaders, rows };
 }
 
+// ── SAILWAVE LINKS ──────────────────────────────────────────────
+function onSWTypeChange() {
+  const type = document.getElementById('sw-type').value;
+  type === 'evening' ? show('sw-date-group') : hide('sw-date-group');
+  type === 'special' ? show('sw-special-group') : hide('sw-special-group');
+}
+
+function getSWKey() {
+  const type = document.getElementById('sw-type').value;
+  const year = document.getElementById('sw-year').value;
+  if (!type || !year) return null;
+  if (type === 'evening') {
+    const date = document.getElementById('sw-date').value;
+    if (!date) return null;
+    return 'evening_' + date;
+  }
+  if (type === 'special') {
+    const num = document.getElementById('sw-special-num').value;
+    return 'special_' + year + '_' + num;
+  }
+  return type + '_' + year;
+}
+
+async function saveSailwaveLink() {
+  const key = getSWKey();
+  const url = document.getElementById('sw-url').value.trim();
+  const s   = document.getElementById('sw-status');
+  if (!key) { s.textContent = 'Please select a type and fill in all fields.'; s.className = 'status error visible'; return; }
+  if (!url) { s.textContent = 'Please enter a URL.'; s.className = 'status error visible'; return; }
+
+  try {
+    const res = await fetch(API + '/sailwave-links', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-Admin-Password': sessionPassword },
+      body: JSON.stringify({ key, url }),
+    });
+    const result = await res.json();
+    if (res.ok) {
+      s.textContent = '✓ Link saved for ' + key;
+      s.className = 'status success visible';
+      document.getElementById('sw-url').value = '';
+      document.getElementById('sw-type').value = '';
+      hide('sw-date-group'); hide('sw-special-group');
+      loadSailwaveLinks();
+    } else {
+      s.textContent = 'Save failed: ' + (result.error || 'Unknown error');
+      s.className = 'status error visible';
+    }
+  } catch(e) {
+    s.textContent = 'Save failed: ' + e.message;
+    s.className = 'status error visible';
+  }
+}
+
+async function deleteSailwaveLink(key) {
+  if (!confirm('Remove Sailwave link for ' + key + '?')) return;
+  const s = document.getElementById('sw-status');
+  try {
+    const res = await fetch(API + '/sailwave-links', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-Admin-Password': sessionPassword },
+      body: JSON.stringify({ key, url: '' }),
+    });
+    if (res.ok) {
+      s.textContent = '✓ Link removed for ' + key;
+      s.className = 'status success visible';
+      loadSailwaveLinks();
+      setTimeout(() => { s.className = 'status'; }, 3000);
+    }
+  } catch(e) {
+    s.textContent = 'Delete failed: ' + e.message;
+    s.className = 'status error visible';
+  }
+}
+
+async function loadSailwaveLinks() {
+  const list = document.getElementById('sw-link-list');
+  list.innerHTML = '<li class="empty-list"><span class="spinner"></span> Loading...</li>';
+  try {
+    const res = await fetch(API + '/sailwave-links');
+    const links = await res.json();
+    const entries = Object.entries(links);
+    if (!entries.length) {
+      list.innerHTML = '<li class="empty-list">No Sailwave links saved yet.</li>';
+      return;
+    }
+    entries.sort((a, b) => a[0].localeCompare(b[0]));
+    list.innerHTML = entries.map(([key, url]) =>
+      '<li class="file-item">' +
+        '<div class="file-key">' + key + '</div>' +
+        '<div class="file-meta" style="flex:2;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' +
+          '<a href="' + url + '" target="_blank" style="color:var(--sky);font-size:0.78rem;">' + url + '</a>' +
+        '</div>' +
+        '<div class="file-actions">' +
+          '<button class="btn btn-danger btn-small" onclick="deleteSailwaveLink(\'' + key + '\')">Remove</button>' +
+        '</div>' +
+      '</li>'
+    ).join('');
+  } catch(e) {
+    list.innerHTML = '<li class="empty-list" style="color:#ef4444;">Could not load links.</li>';
+  }
+}
+
+// ── SI PDF UPLOAD ───────────────────────────────────────────────
 function readFileAsText(file) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -478,7 +667,6 @@ function readFileAsText(file) {
   });
 }
 
-// ── SI PDF UPLOAD ───────────────────────────────────────────────
 function updateSIBtn() {
   const file = document.getElementById('si-file-input').files[0];
   document.getElementById('si-upload-btn').disabled = !file;

@@ -824,6 +824,15 @@
   const API = 'https://calshot-racing-api.doug-reid-21.workers.dev';
   const YEAR = '2026';
 
+  // Sailwave links loaded once at startup — { "series1_2026": "https://...", ... }
+  let sailwaveLinks = {};
+  async function fetchSailwaveLinks() {
+    try {
+      const res = await fetch(API + '/sailwave-links');
+      if (res.ok) sailwaveLinks = await res.json();
+    } catch(e) {}
+  }
+
   // ── SAILWAVE HTML PARSER ────────────────────────────────────────
   function parseSailwaveHTML(html) {
     const parser = new DOMParser();
@@ -882,10 +891,24 @@
     return highlights;
   }
 
+  function sailwaveBtn(linkKey) {
+    const url = sailwaveLinks[linkKey];
+    if (!url) return '';
+    return '<a href="' + url + '" target="_blank" rel="noopener" ' +
+      'style="display:inline-flex;align-items:center;gap:0.35rem;font-size:0.78rem;' +
+      'color:var(--muted);border:1px solid var(--border);border-radius:6px;' +
+      'padding:0.3rem 0.7rem;text-decoration:none;transition:all 0.15s;" ' +
+      'onmouseover="this.style.color=\'var(--sky)\';this.style.borderColor=\'var(--sky)\'" ' +
+      'onmouseout="this.style.color=\'var(--muted)\';this.style.borderColor=\'var(--border)\'">'+
+      'Sailwave ↗</a>';
+  }
+
   // ── RENDER RESULTS TABLE ────────────────────────────────────────
-  function renderResultsTable(data, compact = false) {
+  function renderResultsTable(data, compact = false, linkKey = '') {
     if (!data || !data.rows || data.rows.length === 0) {
-      return '<div class="placeholder"><div class="placeholder-icon">⛵</div><p>No results yet — check back after the first racing evening.</p></div>';
+      const swBtn = sailwaveBtn(linkKey);
+      const swLine = swBtn ? '<p style="margin-top:0.75rem;font-size:0.82rem;color:var(--muted);">Results not showing? View on ' + swBtn + '</p>' : '';
+      return '<div class="placeholder"><div class="placeholder-icon">⛵</div><p>No results yet — check back after the first racing evening.</p>' + swLine + '</div>';
     }
     const highlights = compact ? [] : getRaceHighlights(data.rows);
     let html = '<div style="overflow-x:auto;">';
@@ -939,7 +962,10 @@
     html += '<p style="font-size:0.75rem;color:var(--muted);margin-top:0.75rem;">';
     html += data.sailed + ' races · ' + data.discards + ' discards · ' + data.entries + ' entries';
     if (!compact) html += ' · Gold=1st · Blue=2nd · Bronze=3rd per race';
-    html += '</p></div>';
+    html += '</p>';
+    const swBtn = sailwaveBtn(linkKey);
+    if (swBtn) html += '<p style="margin-top:0.5rem;font-size:0.82rem;color:var(--muted);">View full results on ' + swBtn + '</p>';
+    html += '</div>';
     return html;
   }
 
@@ -1004,9 +1030,10 @@
   // ── LOAD SERIES TAB ─────────────────────────────────────────────
   async function loadSeriesTab(type, bodyId, year) {
     const y = year || YEAR;
+    const linkKey = type + '_' + y;
     const html = await fetchFile(type + '_' + y + '.html');
-    if (html) setHTML(bodyId, renderResultsTable(parseSailwaveHTML(html), false));
-    else setHTML(bodyId, '<div class="placeholder"><div class="placeholder-icon">⛵</div><p>No results uploaded yet for this series.</p></div>');
+    if (html) setHTML(bodyId, renderResultsTable(parseSailwaveHTML(html), false, linkKey));
+    else setHTML(bodyId, renderResultsTable(null, false, linkKey));
   }
 
   // ── LOAD SPECIAL RACES TAB ──────────────────────────────────────
@@ -1027,9 +1054,10 @@
         const fileHtml = await fetchFile(sp.key);
         if (!fileHtml) continue;
         const data = parseSailwaveHTML(fileHtml);
+        const linkKey = sp.key.replace('.html', '');
         html += '<div class="card" style="margin-bottom:1.5rem;">';
         html += '<div class="card-header"><span class="card-header-title">' + sp.displayName + '</span><span class="badge">' + data.sailed + ' races · ' + data.entries + ' entries</span></div>';
-        html += '<div class="card-body">' + renderResultsTable(data, false) + '</div>';
+        html += '<div class="card-body">' + renderResultsTable(data, false, linkKey) + '</div>';
         html += '</div>';
       }
       container.innerHTML = html || '<div class="card"><div class="card-body"><div class="placeholder"><div class="placeholder-icon">🚩</div><p>No Special Races...Yet</p></div></div></div>';
@@ -1047,8 +1075,9 @@
       if (!el) continue;
       el.innerHTML = '<div class="loading"><div class="loading-spinner"></div><p>Loading...</p></div>';
       const html = await fetchFile(t + '_2025.html');
-      if (html) el.innerHTML = renderResultsTable(parseSailwaveHTML(html), t !== 'overall');
-      else el.innerHTML = '<div class="placeholder"><div class="placeholder-icon">📋</div><p>Not yet uploaded.</p></div>';
+      const linkKey = t + '_2025';
+      if (html) el.innerHTML = renderResultsTable(parseSailwaveHTML(html), t !== 'overall', linkKey);
+      else el.innerHTML = renderResultsTable(null, false, linkKey);
     }
   }
 
@@ -1064,13 +1093,25 @@
           ['January','February','March','April','May','June','July','August','September','October','November','December'][parseInt(parts[1])-1] +
           ' ' + parts[0];
         document.querySelectorAll('.date-label').forEach(el => {
-          if (el.textContent.includes(displayDate)) {
-            const linksDiv = el.parentElement.querySelector('.date-links');
-            if (linksDiv && linksDiv.querySelector('.pill-btn.tbc')) {
-              linksDiv.innerHTML = '<button class="pill-btn results" onclick="showEvening(\'' + ev.key + '\')">Results</button>';
+            if (el.textContent.includes(displayDate)) {
+              const linksDiv = el.parentElement.querySelector('.date-links');
+              if (linksDiv && linksDiv.querySelector('.pill-btn.tbc')) {
+                const linkKey = ev.key.replace('.html', '');
+                const swUrl = sailwaveLinks[linkKey];
+                const swBtn = swUrl
+                  ? '<a href="' + swUrl + '" target="_blank" rel="noopener" class="pill-btn results" style="background:rgba(59,157,232,0.15);color:var(--sky);border:1px solid rgba(59,157,232,0.3);">Sailwave ↗</a>'
+                  : '';
+                linksDiv.innerHTML = '<button class="pill-btn results" onclick="showEvening(\'' + ev.key + '\')">Results</button>' + swBtn;
+              } else if (linksDiv && linksDiv.querySelector('.pill-btn.results')) {
+                // Results button already there — just append Sailwave if we have a link
+                const linkKey = ev.key.replace('.html', '');
+                const swUrl = sailwaveLinks[linkKey];
+                if (swUrl && !linksDiv.querySelector('a[href="' + swUrl + '"]')) {
+                  linksDiv.insertAdjacentHTML('beforeend', '<a href="' + swUrl + '" target="_blank" rel="noopener" class="pill-btn results" style="background:rgba(59,157,232,0.15);color:var(--sky);border:1px solid rgba(59,157,232,0.3);">Sailwave ↗</a>');
+                }
+              }
             }
-          }
-        });
+          });
       });
     } catch(e) {}
   }
@@ -1089,7 +1130,8 @@
     }
     document.getElementById('evening-title').textContent = displayDate;
     const html = await fetchFile(key);
-    setHTML('evening-body', html ? renderResultsTable(parseSailwaveHTML(html), false) : errorHTML('Could not load results for this evening.'));
+    const linkKey = key.replace('.html', '');
+    setHTML('evening-body', html ? renderResultsTable(parseSailwaveHTML(html), false, linkKey) : renderResultsTable(null, false, linkKey));
   }
 
     // ── PAGE LIFECYCLE ──────────────────────────────────────────────
@@ -1257,7 +1299,10 @@
     document.getElementById('page-si').scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
-  document.addEventListener("DOMContentLoaded", loadHome);
+  document.addEventListener("DOMContentLoaded", async () => {
+    await fetchSailwaveLinks();
+    loadHome();
+  });
 </script>
 
 </body>
