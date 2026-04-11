@@ -37,7 +37,8 @@ function validKey(key) {
   return /^(series[123]|overall)_\d{4}\.html$/.test(key) ||
          /^evening_\d{4}-\d{2}-\d{2}\.html$/.test(key) ||
          /^special_\d{4}_\d{2}\.html$/.test(key) ||
-         /^special_\d{4}_\d{2}\.meta\.json$/.test(key);
+         /^special_\d{4}_\d{2}\.meta\.json$/.test(key) ||
+         /^SIs_\d{4}\.pdf$/.test(key);
 }
 
 export default {
@@ -66,6 +67,19 @@ export default {
       try {
         const obj = await env.RACING_BUCKET.get(key);
         if (!obj) return json({ error: 'Not found', key }, 404, origin);
+        // PDFs are served as binary with correct content-type, not wrapped in JSON
+        if (key.endsWith('.pdf')) {
+          const bytes = await obj.arrayBuffer();
+          return new Response(bytes, {
+            status: 200,
+            headers: {
+              ...corsHeaders(origin),
+              'Content-Type': 'application/pdf',
+              'Content-Disposition': 'inline; filename="' + key + '"',
+              'Cache-Control': 'public, max-age=3600',
+            },
+          });
+        }
         const content = await obj.text();
         return json({ key, content }, 200, origin);
       } catch(e) { return json({ error: 'Fetch failed' }, 500, origin); }
@@ -165,15 +179,25 @@ export default {
         const { key, content, meta } = body;
         if (!key || !content) return json({ error: 'Missing key or content' }, 400, origin);
         if (!validKey(key)) return json({ error: 'Invalid key' }, 400, origin);
-        await env.RACING_BUCKET.put(key, content, {
-          httpMetadata: { contentType: 'text/html; charset=utf-8' },
-        });
-        // Store metadata if provided (for special races)
-        if (meta && key.endsWith('.html')) {
-          const metaKey = key.replace('.html', '.meta.json');
-          await env.RACING_BUCKET.put(metaKey, JSON.stringify(meta), {
-            httpMetadata: { contentType: 'application/json' },
+
+        if (key.endsWith('.pdf')) {
+          // content is a base64 data URL: "data:application/pdf;base64,<data>"
+          const base64 = content.replace(/^data:[^;]+;base64,/, '');
+          const bytes = Uint8Array.from(atob(base64), c => c.charCodeAt(0));
+          await env.RACING_BUCKET.put(key, bytes, {
+            httpMetadata: { contentType: 'application/pdf' },
           });
+        } else {
+          await env.RACING_BUCKET.put(key, content, {
+            httpMetadata: { contentType: 'text/html; charset=utf-8' },
+          });
+          // Store metadata if provided (for special races)
+          if (meta && key.endsWith('.html')) {
+            const metaKey = key.replace('.html', '.meta.json');
+            await env.RACING_BUCKET.put(metaKey, JSON.stringify(meta), {
+              httpMetadata: { contentType: 'application/json' },
+            });
+          }
         }
         return json({ success: true, key }, 200, origin);
       } catch(e) { return json({ error: 'Upload failed: ' + e.message }, 500, origin); }
