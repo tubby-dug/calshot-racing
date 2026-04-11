@@ -854,6 +854,7 @@
       rows.push(row);
     });
     const raceHeaders = headers.slice(raceStartIdx, headers.length - 2);
+    console.log('RAW raceHeaders:', JSON.stringify(raceHeaders));
     return { sailed, discards, entries, raceHeaders, rows, captionText };
   }
 
@@ -892,8 +893,9 @@
     html += '<thead><tr><th>Pos</th><th>Name</th><th>Div</th>';
     if (!compact) {
       data.raceHeaders.forEach(h => {
-        // Sailwave format: "R117/6/25" — race number followed by d/m/yy date
-        const m = h.trim().match(/^(R\d+)(\d{1,2})\/(\d{1,2})\/(\d{2,4})$/);
+        // Sailwave header is "R1 2/7/25" — textContent may collapse the space to "R12/7/25"
+        // Anchor on the date: find digits/digits/digits at the end, rest is race number
+        const m = h.trim().match(/^(R\d+?)\s*(\d{1,2})\/(\d{1,2})\/(\d{2,4})$/);
         if (m) {
           const raceNum = m[1];
           const day     = m[2].padStart(2, '0');
