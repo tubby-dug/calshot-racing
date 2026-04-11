@@ -105,5 +105,3 @@ The Calshot Solent Weather app is a separate project on the same Cloudflare acco
 [calshot-weather3.pages.dev](https://calshot-weather3.pages.dev) — repo: `tubby-dug/Calshot-app`
 
 ---
-
-*Calshot Activity Centre — Hampshire County Council*
