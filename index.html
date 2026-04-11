@@ -504,8 +504,9 @@
         <div class="card-header">
           <span class="card-header-title">Series 1 — Apr to Jun</span>
           <span class="badge">In progress</span>
+          <span id="sw-series1_2026"></span>
         </div>
-        <div class="card-body">
+        <div class="card-body" id="tab-body-series1">
           <div class="placeholder">
             <div class="placeholder-icon">⛵</div>
             <p>Series 1 results will appear here. Racing begins 14 April.</p>
@@ -519,8 +520,9 @@
         <div class="card-header">
           <span class="card-header-title">Series 2 — Jun to Jul</span>
           <span class="badge">Not yet started</span>
+          <span id="sw-series2_2026"></span>
         </div>
-        <div class="card-body">
+        <div class="card-body" id="tab-body-series2">
           <div class="placeholder">
             <div class="placeholder-icon">⛵</div>
             <p>Series 2 results will appear here. Racing begins 23 June.</p>
@@ -534,8 +536,9 @@
         <div class="card-header">
           <span class="card-header-title">Series 3 — Aug to Sep</span>
           <span class="badge">Not yet started</span>
+          <span id="sw-series3_2026"></span>
         </div>
-        <div class="card-body">
+        <div class="card-body" id="tab-body-series3">
           <div class="placeholder">
             <div class="placeholder-icon">⛵</div>
             <p>Series 3 results will appear here. Racing begins 11 August.</p>
@@ -549,8 +552,9 @@
         <div class="card-header">
           <span class="card-header-title">2026 Overall</span>
           <span class="badge">Season in progress</span>
+          <span id="sw-overall_2026"></span>
         </div>
-        <div class="card-body">
+        <div class="card-body" id="tab-body-overall">
           <div class="placeholder">
             <div class="placeholder-icon">🏆</div>
             <p>Overall standings will be calculated from all three series.</p>
@@ -558,6 +562,20 @@
         </div>
       </div>
     </div>
+
+    <div id="tab-specials" class="tab-panel">
+      <div id="specials-container">
+        <div class="card">
+          <div class="card-body">
+            <div class="placeholder">
+              <div class="placeholder-icon">🚩</div>
+              <p>No Special Races...Yet</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
   </div>
 </div>
 
@@ -583,7 +601,7 @@
 
     <div id="tab-2025-overall" class="tab-panel active">
       <div class="card">
-        <div class="card-header"><span class="card-header-title">2025 Overall</span><span class="badge">Season complete</span></div>
+        <div class="card-header"><span class="card-header-title">2025 Overall</span><span class="badge">Season complete</span><span id="sw-2025-overall"></span></div>
         <div class="card-body" id="body-2025-overall">
           <div class="loading"><div class="loading-spinner"></div><p>Loading...</p></div>
         </div>
@@ -591,7 +609,7 @@
     </div>
     <div id="tab-2025-series1" class="tab-panel">
       <div class="card">
-        <div class="card-header"><span class="card-header-title">2025 Series 1</span></div>
+        <div class="card-header"><span class="card-header-title">2025 Series 1</span><span id="sw-2025-series1"></span></div>
         <div class="card-body" id="body-2025-series1">
           <div class="loading"><div class="loading-spinner"></div><p>Loading...</p></div>
         </div>
@@ -599,7 +617,7 @@
     </div>
     <div id="tab-2025-series2" class="tab-panel">
       <div class="card">
-        <div class="card-header"><span class="card-header-title">2025 Series 2</span></div>
+        <div class="card-header"><span class="card-header-title">2025 Series 2</span><span id="sw-2025-series2"></span></div>
         <div class="card-body" id="body-2025-series2">
           <div class="loading"><div class="loading-spinner"></div><p>Loading...</p></div>
         </div>
@@ -607,7 +625,7 @@
     </div>
     <div id="tab-2025-series3" class="tab-panel">
       <div class="card">
-        <div class="card-header"><span class="card-header-title">2025 Series 3</span></div>
+        <div class="card-header"><span class="card-header-title">2025 Series 3</span><span id="sw-2025-series3"></span></div>
         <div class="card-body" id="body-2025-series3">
           <div class="loading"><div class="loading-spinner"></div><p>Loading...</p></div>
         </div>
@@ -803,6 +821,7 @@
     <div class="card">
       <div class="card-header">
         <span class="card-header-title">Race Results</span>
+        <span id="sw-evening-slot"></span>
         <button class="pill-btn results" onclick="showPage('dates')" style="font-size:0.72rem;">← Back to Dates</button>
       </div>
       <div class="card-body" id="evening-body">
@@ -895,20 +914,19 @@
     const url = sailwaveLinks[linkKey];
     if (!url) return '';
     return '<a href="' + url + '" target="_blank" rel="noopener" ' +
-      'style="display:inline-flex;align-items:center;gap:0.35rem;font-size:0.78rem;' +
-      'color:var(--muted);border:1px solid var(--border);border-radius:6px;' +
-      'padding:0.3rem 0.7rem;text-decoration:none;transition:all 0.15s;" ' +
-      'onmouseover="this.style.color=\'var(--sky)\';this.style.borderColor=\'var(--sky)\'" ' +
-      'onmouseout="this.style.color=\'var(--muted)\';this.style.borderColor=\'var(--border)\'">'+
+      'style="display:inline-flex;align-items:center;gap:0.4rem;' +
+      'background:#3d5a9e;color:#fff;border-radius:6px;' +
+      'padding:0.3rem 0.75rem;text-decoration:none;font-size:0.78rem;font-weight:700;' +
+      'letter-spacing:0.04em;transition:opacity 0.15s;white-space:nowrap;" ' +
+      'onmouseover="this.style.opacity=\'0.85\'" onmouseout="this.style.opacity=\'1\'">' +
+      '<img src="https://www.sailwave.com/favicon.ico" style="width:14px;height:14px;border-radius:2px;" onerror="this.style.display=\'none\'" />' +
       'Sailwave ↗</a>';
   }
 
   // ── RENDER RESULTS TABLE ────────────────────────────────────────
-  function renderResultsTable(data, compact = false, linkKey = '') {
+  function renderResultsTable(data, compact = false) {
     if (!data || !data.rows || data.rows.length === 0) {
-      const swBtn = sailwaveBtn(linkKey);
-      const swLine = swBtn ? '<p style="margin-top:0.75rem;font-size:0.82rem;color:var(--muted);">Results not showing? View on ' + swBtn + '</p>' : '';
-      return '<div class="placeholder"><div class="placeholder-icon">⛵</div><p>No results yet — check back after the first racing evening.</p>' + swLine + '</div>';
+      return '<div class="placeholder"><div class="placeholder-icon">⛵</div><p>No results yet — check back after the first racing evening.</p></div>';
     }
     const highlights = compact ? [] : getRaceHighlights(data.rows);
     let html = '<div style="overflow-x:auto;">';
@@ -963,8 +981,6 @@
     html += data.sailed + ' races · ' + data.discards + ' discards · ' + data.entries + ' entries';
     if (!compact) html += ' · Gold=1st · Blue=2nd · Bronze=3rd per race';
     html += '</p>';
-    const swBtn = sailwaveBtn(linkKey);
-    if (swBtn) html += '<p style="margin-top:0.5rem;font-size:0.82rem;color:var(--muted);">View full results on ' + swBtn + '</p>';
     html += '</div>';
     return html;
   }
@@ -1027,13 +1043,19 @@
     }
   }
 
+  function injectSailwaveBtn(slotId, linkKey) {
+    const slot = document.getElementById(slotId);
+    if (slot) slot.innerHTML = sailwaveBtn(linkKey);
+  }
+
   // ── LOAD SERIES TAB ─────────────────────────────────────────────
   async function loadSeriesTab(type, bodyId, year) {
     const y = year || YEAR;
     const linkKey = type + '_' + y;
+    injectSailwaveBtn('sw-' + linkKey, linkKey);
     const html = await fetchFile(type + '_' + y + '.html');
-    if (html) setHTML(bodyId, renderResultsTable(parseSailwaveHTML(html), false, linkKey));
-    else setHTML(bodyId, renderResultsTable(null, false, linkKey));
+    if (html) setHTML(bodyId, renderResultsTable(parseSailwaveHTML(html), false));
+    else setHTML(bodyId, renderResultsTable(null, false));
   }
 
   // ── LOAD SPECIAL RACES TAB ──────────────────────────────────────
@@ -1055,9 +1077,10 @@
         if (!fileHtml) continue;
         const data = parseSailwaveHTML(fileHtml);
         const linkKey = sp.key.replace('.html', '');
+        const swBtn = sailwaveBtn(linkKey);
         html += '<div class="card" style="margin-bottom:1.5rem;">';
-        html += '<div class="card-header"><span class="card-header-title">' + sp.displayName + '</span><span class="badge">' + data.sailed + ' races · ' + data.entries + ' entries</span></div>';
-        html += '<div class="card-body">' + renderResultsTable(data, false, linkKey) + '</div>';
+        html += '<div class="card-header"><span class="card-header-title">' + sp.displayName + '</span><span class="badge">' + data.sailed + ' races · ' + data.entries + ' entries</span>' + swBtn + '</div>';
+        html += '<div class="card-body">' + renderResultsTable(data, false) + '</div>';
         html += '</div>';
       }
       container.innerHTML = html || '<div class="card"><div class="card-body"><div class="placeholder"><div class="placeholder-icon">🚩</div><p>No Special Races...Yet</p></div></div></div>';
@@ -1074,10 +1097,11 @@
       const el = document.getElementById(bodyId);
       if (!el) continue;
       el.innerHTML = '<div class="loading"><div class="loading-spinner"></div><p>Loading...</p></div>';
-      const html = await fetchFile(t + '_2025.html');
       const linkKey = t + '_2025';
-      if (html) el.innerHTML = renderResultsTable(parseSailwaveHTML(html), t !== 'overall', linkKey);
-      else el.innerHTML = renderResultsTable(null, false, linkKey);
+      injectSailwaveBtn('sw-2025-' + t, linkKey);
+      const html = await fetchFile(t + '_2025.html');
+      if (html) el.innerHTML = renderResultsTable(parseSailwaveHTML(html), t !== 'overall');
+      else el.innerHTML = renderResultsTable(null, false);
     }
   }
 
@@ -1131,7 +1155,8 @@
     document.getElementById('evening-title').textContent = displayDate;
     const html = await fetchFile(key);
     const linkKey = key.replace('.html', '');
-    setHTML('evening-body', html ? renderResultsTable(parseSailwaveHTML(html), false, linkKey) : renderResultsTable(null, false, linkKey));
+    injectSailwaveBtn('sw-evening-slot', linkKey);
+    setHTML('evening-body', html ? renderResultsTable(parseSailwaveHTML(html), false) : renderResultsTable(null, false));
   }
 
     // ── PAGE LIFECYCLE ──────────────────────────────────────────────
