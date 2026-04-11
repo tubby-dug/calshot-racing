@@ -169,8 +169,36 @@
     </div>
 
     <div class="card">
-      <div class="card-header">
-        <span>Files in R2</span>
+      <div class="card-header">Upload Sailing Instructions (PDF)</div>
+      <div class="card-body">
+        <div id="si-upload-status" class="status"></div>
+        <div class="form-row">
+          <div>
+            <label class="form-label">Year</label>
+            <select class="form-select" id="si-upload-year">
+              <option value="2026">2026</option>
+              <option value="2025">2025</option>
+              <option value="2027">2027</option>
+              <option value="2028">2028</option>
+            </select>
+          </div>
+          <div>
+            <label class="form-label">PDF File</label>
+            <input type="file" class="form-input" id="si-file-input" accept=".pdf" onchange="updateSIBtn()" />
+          </div>
+        </div>
+        <p style="font-size:0.78rem;color:var(--muted);margin-bottom:1.25rem;">
+          Uploads as <code style="background:rgba(255,255,255,0.07);padding:0.1rem 0.4rem;border-radius:4px;">SIs_YYYY.pdf</code> to R2.
+          The Sailing Instructions page on the public site will update immediately.
+        </p>
+        <div style="display:flex;gap:0.75rem;flex-wrap:wrap;align-items:center;">
+          <button class="btn btn-primary" id="si-upload-btn" onclick="uploadSI()" disabled>Upload PDF</button>
+          <span id="si-upload-filename" style="font-size:0.82rem;color:var(--muted);"></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
         <button class="btn btn-ghost btn-small" onclick="loadFileList()">↻ Refresh</button>
       </div>
       <div class="card-body">
@@ -448,6 +476,59 @@ function readFileAsText(file) {
     reader.onerror = reject;
     reader.readAsText(file, 'ISO-8859-1');
   });
+}
+
+// ── SI PDF UPLOAD ───────────────────────────────────────────────
+function updateSIBtn() {
+  const file = document.getElementById('si-file-input').files[0];
+  document.getElementById('si-upload-btn').disabled = !file;
+  document.getElementById('si-upload-filename').textContent = file ? file.name + ' (' + (file.size / 1024).toFixed(1) + ' KB)' : '';
+}
+
+async function uploadSI() {
+  const file = document.getElementById('si-file-input').files[0];
+  const year = document.getElementById('si-upload-year').value;
+  if (!file) return;
+
+  const key = 'SIs_' + year + '.pdf';
+  const btn = document.getElementById('si-upload-btn');
+  const s   = document.getElementById('si-upload-status');
+
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> Uploading...';
+
+  try {
+    // Read PDF as base64 data URL
+    const base64 = await new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = e => resolve(e.target.result); // data:application/pdf;base64,...
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+
+    const res = await fetch(API + '/upload', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-Admin-Password': sessionPassword },
+      body: JSON.stringify({ key, content: base64 })
+    });
+    const result = await res.json();
+    if (res.ok) {
+      s.textContent = '✓ ' + key + ' uploaded. The Sailing Instructions page will now serve the new PDF.';
+      s.className = 'status success visible';
+      document.getElementById('si-file-input').value = '';
+      document.getElementById('si-upload-filename').textContent = '';
+      loadFileList();
+    } else {
+      s.textContent = 'Upload failed: ' + (result.error || 'Unknown error');
+      s.className = 'status error visible';
+    }
+  } catch(e) {
+    s.textContent = 'Upload failed: ' + e.message;
+    s.className = 'status error visible';
+  }
+
+  btn.disabled = false;
+  btn.innerHTML = 'Upload PDF';
 }
 </script>
 </body>
