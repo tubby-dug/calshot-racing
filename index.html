@@ -892,8 +892,19 @@
     html += '<thead><tr><th>Pos</th><th>Name</th><th>Div</th>';
     if (!compact) {
       data.raceHeaders.forEach(h => {
-        const parts = h.trim().split(/\s+/);
-        html += '<th>' + parts[0] + (parts[1] ? '<br/><small>' + parts.slice(1).join(' ') + '</small>' : '') + '</th>';
+        // Sailwave format: "R117/6/25" — race number followed by d/m/yy date
+        const m = h.trim().match(/^(R\d+)(\d{1,2})\/(\d{1,2})\/(\d{2,4})$/);
+        if (m) {
+          const raceNum = m[1];
+          const day     = m[2].padStart(2, '0');
+          const month   = m[3].padStart(2, '0');
+          const year    = m[4].length === 2 ? m[4] : m[4].slice(-2);
+          html += '<th style="white-space:nowrap;"><strong>' + raceNum + '</strong><br/><small style="font-weight:400;letter-spacing:0;">' + day + '/' + month + '/' + year + '</small></th>';
+        } else {
+          // Fallback: split on whitespace as before
+          const parts = h.trim().split(/\s+/);
+          html += '<th>' + parts[0] + (parts[1] ? '<br/><small>' + parts.slice(1).join(' ') + '</small>' : '') + '</th>';
+        }
       });
     }
     html += '<th>Nett</th></tr></thead><tbody>';
