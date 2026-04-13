@@ -88,18 +88,37 @@
   <!-- LOCK SCREEN -->
   <div id="lock-screen">
     <div class="lock-icon">🔒</div>
-    <div class="lock-title">Admin Access</div>
-    <div class="lock-sub">Enter your admin password to continue.</div>
-    <div style="width:100%;max-width:320px;">
-      <div class="form-group">
-        <input type="password" class="form-input" id="password-input" placeholder="Admin password" autocomplete="current-password" />
+    <div class="lock-title">CAC Racing Admin</div>
+    <div class="lock-sub">Choose a section to unlock.</div>
+
+    <div style="width:100%;max-width:560px;display:flex;gap:1.5rem;flex-wrap:wrap;justify-content:center;">
+
+      <!-- Race Results login -->
+      <div style="flex:1;min-width:220px;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.5rem;">
+        <div style="font-family:var(--font-display);font-size:1rem;font-weight:900;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:0.4rem;">Race Results</div>
+        <div style="font-size:0.78rem;color:var(--muted);margin-bottom:1rem;">Upload results, manage files, approve reports.</div>
+        <div class="form-group">
+          <input type="password" class="form-input" id="password-input" placeholder="Results password" autocomplete="current-password" />
+        </div>
+        <div id="auth-status" class="status"></div>
+        <button class="btn btn-accent" style="width:100%;" onclick="login()">Unlock Results</button>
       </div>
-      <div id="auth-status" class="status"></div>
-      <button class="btn btn-accent" style="width:100%;" onclick="login()">Unlock Admin</button>
+
+      <!-- Race Reports login -->
+      <div style="flex:1;min-width:220px;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.5rem;">
+        <div style="font-family:var(--font-display);font-size:1rem;font-weight:900;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:0.4rem;">Race Reports</div>
+        <div style="font-size:0.78rem;color:var(--muted);margin-bottom:1rem;">Submit a race report for review.</div>
+        <div class="form-group">
+          <input type="password" class="form-input" id="report-password-input" placeholder="Reports password" autocomplete="current-password" />
+        </div>
+        <div id="report-auth-status" class="status"></div>
+        <button class="btn btn-primary" style="width:100%;" onclick="loginReport()">Unlock Reports</button>
+      </div>
+
     </div>
   </div>
 
-  <!-- ADMIN CONTENT -->
+  <!-- RACE RESULTS CONTENT -->
   <div id="admin-content" style="display:none;">
 
     <div class="card">
@@ -169,99 +188,8 @@
     </div>
 
     <div class="card">
-      <div class="card-header">Upload Sailing Instructions (PDF)</div>
-      <div class="card-body">
-        <div id="si-upload-status" class="status"></div>
-        <div class="form-row">
-          <div>
-            <label class="form-label">Year</label>
-            <select class="form-select" id="si-upload-year">
-              <option value="2026">2026</option>
-              <option value="2025">2025</option>
-              <option value="2027">2027</option>
-              <option value="2028">2028</option>
-            </select>
-          </div>
-          <div>
-            <label class="form-label">PDF File</label>
-            <input type="file" class="form-input" id="si-file-input" accept=".pdf" onchange="updateSIBtn()" />
-          </div>
-        </div>
-        <p style="font-size:0.78rem;color:var(--muted);margin-bottom:1.25rem;">
-          Uploads as <code style="background:rgba(255,255,255,0.07);padding:0.1rem 0.4rem;border-radius:4px;">SIs_YYYY.pdf</code> to R2.
-          The Sailing Instructions page on the public site will update immediately.
-        </p>
-        <div style="display:flex;gap:0.75rem;flex-wrap:wrap;align-items:center;">
-          <button class="btn btn-primary" id="si-upload-btn" onclick="uploadSI()" disabled>Upload PDF</button>
-          <span id="si-upload-filename" style="font-size:0.82rem;color:var(--muted);"></span>
-        </div>
-      </div>
-    </div>
-
-    <div class="card">
       <div class="card-header">
-        <span>Sailwave Links</span>
-        <button class="btn btn-ghost btn-small" onclick="loadSailwaveLinks()">↻ Refresh</button>
-      </div>
-      <div class="card-body">
-        <div id="sw-status" class="status"></div>
-
-        <div class="form-row">
-          <div>
-            <label class="form-label">Type</label>
-            <select class="form-select" id="sw-type" onchange="onSWTypeChange()">
-              <option value="">— Select type —</option>
-              <option value="series1">Series 1</option>
-              <option value="series2">Series 2</option>
-              <option value="series3">Series 3</option>
-              <option value="overall">Overall</option>
-              <option value="evening">Individual Evening</option>
-              <option value="special">Special Race</option>
-            </select>
-          </div>
-          <div>
-            <label class="form-label">Year</label>
-            <select class="form-select" id="sw-year">
-              <option value="2026">2026</option>
-              <option value="2025">2025</option>
-              <option value="2027">2027</option>
-              <option value="2028">2028</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="form-group hidden" id="sw-date-group">
-          <label class="form-label">Evening Date</label>
-          <input type="date" class="form-input" id="sw-date" />
-        </div>
-
-        <div class="form-group hidden" id="sw-special-group">
-          <label class="form-label">Special Race Number</label>
-          <select class="form-select" id="sw-special-num">
-            <option value="01">Special 01</option>
-            <option value="02">Special 02</option>
-            <option value="03">Special 03</option>
-            <option value="04">Special 04</option>
-          </select>
-        </div>
-
-        <div class="form-group">
-          <label class="form-label">Sailwave URL</label>
-          <input type="url" class="form-input" id="sw-url" placeholder="https://sailwave.com/publish/..." />
-        </div>
-
-        <div style="display:flex; gap:0.75rem; flex-wrap:wrap;">
-          <button class="btn btn-primary" onclick="saveSailwaveLink()">Save Link</button>
-        </div>
-
-        <div class="divider" style="margin-top:1.5rem;">Saved Links</div>
-        <ul class="file-list" id="sw-link-list">
-          <li class="empty-list"><span class="spinner"></span> Loading...</li>
-        </ul>
-      </div>
-    </div>
-
-    <div class="card">
+        <span>Files in R2</span>
         <button class="btn btn-ghost btn-small" onclick="loadFileList()">↻ Refresh</button>
       </div>
       <div class="card-body">
@@ -272,15 +200,62 @@
       </div>
     </div>
 
+    <!-- Pending Reports -->
+    <div class="card">
+      <div class="card-header">
+        <span>Pending Race Reports</span>
+        <button class="btn btn-ghost btn-small" onclick="loadPendingReports()">↻ Refresh</button>
+      </div>
+      <div class="card-body">
+        <div id="pending-reports-status" class="status"></div>
+        <p style="font-size:0.78rem;color:var(--muted);margin-bottom:1rem;">Reports submitted via the Race Reports panel appear here. Approve to make them visible on the public site. Only approved reports show a button on the Race Dates page.</p>
+        <ul class="file-list" id="pending-reports-list">
+          <li class="empty-list"><span class="spinner"></span> Loading...</li>
+        </ul>
+      </div>
+    </div>
+
     <div style="text-align:center;margin-top:1rem;">
       <button class="btn btn-ghost btn-small" onclick="logout()">Lock Admin</button>
     </div>
+  </div>
+
+  <!-- RACE REPORTS CONTENT -->
+  <div id="report-content" style="display:none;">
+
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;padding-bottom:1rem;border-bottom:1px solid var(--border);">
+      <div style="font-family:var(--font-display);font-size:1.2rem;font-weight:900;text-transform:uppercase;letter-spacing:0.05em;">Race Reports</div>
+      <button class="btn btn-ghost btn-small" onclick="logoutReport()">Lock Reports</button>
+    </div>
+
+    <div class="card">
+      <div class="card-header">Submit Race Report</div>
+      <div class="card-body">
+        <div id="report-upload-status" class="status"></div>
+        <p style="font-size:0.78rem;color:var(--muted);margin-bottom:1.25rem;">Upload a race report for a specific evening. Reports are reviewed by the Race Results admin before appearing on the public site.</p>
+        <div class="form-row">
+          <div>
+            <label class="form-label">Evening Date</label>
+            <input type="date" class="form-input" id="report-date" onchange="updateReportBtn()" />
+          </div>
+          <div>
+            <label class="form-label">Report File (PDF or Word doc)</label>
+            <input type="file" class="form-input" id="report-file-input" accept=".pdf,.docx" onchange="updateReportBtn()" />
+          </div>
+        </div>
+        <div style="display:flex;gap:0.75rem;flex-wrap:wrap;align-items:center;">
+          <button class="btn btn-primary" id="report-upload-btn" onclick="uploadReport()" disabled>Submit Report</button>
+          <span id="report-upload-filename" style="font-size:0.82rem;color:var(--muted);"></span>
+        </div>
+      </div>
+    </div>
+
   </div>
 </div>
 
 <script>
 const API = 'https://calshot-racing-api.doug-reid-21.workers.dev';
-let sessionPassword = '', pendingFile = null, pendingKey = null, pendingMeta = null;
+let sessionPassword = '', reportPassword = '', pendingFile = null, pendingKey = null, pendingMeta = null;
 
 async function login() {
   const pw = document.getElementById('password-input').value;
@@ -301,6 +276,28 @@ async function login() {
       s.className = 'status';
       loadFileList();
       loadSailwaveLinks();
+      loadPendingReports();
+    } else { s.textContent = 'Incorrect password.'; s.className = 'status error visible'; }
+  } catch(e) { s.textContent = 'Could not reach server.'; s.className = 'status error visible'; }
+}
+
+async function loginReport() {
+  const pw = document.getElementById('report-password-input').value;
+  if (!pw) return;
+  const s = document.getElementById('report-auth-status');
+  s.textContent = 'Checking...'; s.className = 'status info visible';
+  try {
+    const res = await fetch(API + '/verify-report-password', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-Report-Password': pw },
+      body: JSON.stringify({})
+    });
+    if (res.ok) {
+      reportPassword = pw;
+      document.getElementById('lock-screen').style.display = 'none';
+      document.getElementById('report-content').style.display = 'block';
+      document.getElementById('report-password-input').value = '';
+      s.className = 'status';
     } else { s.textContent = 'Incorrect password.'; s.className = 'status error visible'; }
   } catch(e) { s.textContent = 'Could not reach server.'; s.className = 'status error visible'; }
 }
@@ -310,7 +307,15 @@ function logout() {
   document.getElementById('lock-screen').style.display = 'flex';
   document.getElementById('admin-content').style.display = 'none';
 }
+
+function logoutReport() {
+  reportPassword = '';
+  document.getElementById('lock-screen').style.display = 'flex';
+  document.getElementById('report-content').style.display = 'none';
+}
+
 document.getElementById('password-input').addEventListener('keydown', e => { if (e.key === 'Enter') login(); });
+document.getElementById('report-password-input').addEventListener('keydown', e => { if (e.key === 'Enter') loginReport(); });
 
 function show(id) { document.getElementById(id).classList.remove('hidden'); }
 function hide(id) { document.getElementById(id).classList.add('hidden'); }
@@ -383,11 +388,7 @@ async function previewFile() {
   const tbody = document.getElementById('preview-tbody');
   const maxShow = 5;
   thead.innerHTML = '<tr><th>Pos</th><th>Name</th><th>Div</th>' +
-    data.raceHeaders.slice(0, maxShow).map(h => {
-      const m = h.trim().match(/^(R\d+)(\d{1,2})\/(\d{1,2})\/(\d{2,4})$/);
-      if (m) return '<th style="white-space:nowrap;"><strong>' + m[1] + '</strong> <small>' + m[2].padStart(2,'0') + '/' + m[3].padStart(2,'0') + '/' + m[4].slice(-2) + '</small></th>';
-      return '<th>' + h.split(' ')[0] + '</th>';
-    }).join('') +
+    data.raceHeaders.slice(0, maxShow).map(h => '<th>' + h.split(' ')[0] + '</th>').join('') +
     (data.raceHeaders.length > maxShow ? '<th>+' + (data.raceHeaders.length - maxShow) + '</th>' : '') +
     '<th>Nett</th></tr>';
   tbody.innerHTML = data.rows.map((row, i) =>
@@ -406,23 +407,6 @@ async function previewFile() {
 
 async function confirmUpload() {
   if (!pendingFile || !pendingKey) return;
-
-  // Check if the key already exists in R2 and warn before overwriting
-  try {
-    const listRes = await fetch(API + '/files');
-    const files = await listRes.json();
-    const existing = Array.isArray(files) && files.find(f => f.key === pendingKey);
-    if (existing) {
-      const uploaded = new Date(existing.uploaded).toLocaleString('en-GB', {
-        day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit'
-      });
-      const ok = confirm('⚠ "' + pendingKey + '" already exists in R2 (uploaded ' + uploaded + ').\n\nOverwrite it?');
-      if (!ok) return;
-    }
-  } catch(e) {
-    // If we can't check, proceed anyway — upload won't be blocked
-  }
-
   const btn = document.getElementById('confirm-btn');
   btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> Uploading...';
   try {
@@ -554,110 +538,6 @@ function parseSailwave(html) {
   return { sailed, discards, entries, raceHeaders, rows };
 }
 
-// ── SAILWAVE LINKS ──────────────────────────────────────────────
-function onSWTypeChange() {
-  const type = document.getElementById('sw-type').value;
-  type === 'evening' ? show('sw-date-group') : hide('sw-date-group');
-  type === 'special' ? show('sw-special-group') : hide('sw-special-group');
-}
-
-function getSWKey() {
-  const type = document.getElementById('sw-type').value;
-  const year = document.getElementById('sw-year').value;
-  if (!type || !year) return null;
-  if (type === 'evening') {
-    const date = document.getElementById('sw-date').value;
-    if (!date) return null;
-    return 'evening_' + date;
-  }
-  if (type === 'special') {
-    const num = document.getElementById('sw-special-num').value;
-    return 'special_' + year + '_' + num;
-  }
-  return type + '_' + year;
-}
-
-async function saveSailwaveLink() {
-  const key = getSWKey();
-  const url = document.getElementById('sw-url').value.trim();
-  const s   = document.getElementById('sw-status');
-  if (!key) { s.textContent = 'Please select a type and fill in all fields.'; s.className = 'status error visible'; return; }
-  if (!url) { s.textContent = 'Please enter a URL.'; s.className = 'status error visible'; return; }
-
-  try {
-    const res = await fetch(API + '/sailwave-links', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'X-Admin-Password': sessionPassword },
-      body: JSON.stringify({ key, url }),
-    });
-    const result = await res.json();
-    if (res.ok) {
-      s.textContent = '✓ Link saved for ' + key;
-      s.className = 'status success visible';
-      document.getElementById('sw-url').value = '';
-      document.getElementById('sw-type').value = '';
-      hide('sw-date-group'); hide('sw-special-group');
-      loadSailwaveLinks();
-    } else {
-      s.textContent = 'Save failed: ' + (result.error || 'Unknown error');
-      s.className = 'status error visible';
-    }
-  } catch(e) {
-    s.textContent = 'Save failed: ' + e.message;
-    s.className = 'status error visible';
-  }
-}
-
-async function deleteSailwaveLink(key) {
-  if (!confirm('Remove Sailwave link for ' + key + '?')) return;
-  const s = document.getElementById('sw-status');
-  try {
-    const res = await fetch(API + '/sailwave-links', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'X-Admin-Password': sessionPassword },
-      body: JSON.stringify({ key, url: '' }),
-    });
-    if (res.ok) {
-      s.textContent = '✓ Link removed for ' + key;
-      s.className = 'status success visible';
-      loadSailwaveLinks();
-      setTimeout(() => { s.className = 'status'; }, 3000);
-    }
-  } catch(e) {
-    s.textContent = 'Delete failed: ' + e.message;
-    s.className = 'status error visible';
-  }
-}
-
-async function loadSailwaveLinks() {
-  const list = document.getElementById('sw-link-list');
-  list.innerHTML = '<li class="empty-list"><span class="spinner"></span> Loading...</li>';
-  try {
-    const res = await fetch(API + '/sailwave-links');
-    const links = await res.json();
-    const entries = Object.entries(links);
-    if (!entries.length) {
-      list.innerHTML = '<li class="empty-list">No Sailwave links saved yet.</li>';
-      return;
-    }
-    entries.sort((a, b) => a[0].localeCompare(b[0]));
-    list.innerHTML = entries.map(([key, url]) =>
-      '<li class="file-item">' +
-        '<div class="file-key">' + key + '</div>' +
-        '<div class="file-meta" style="flex:2;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' +
-          '<a href="' + url + '" target="_blank" style="color:var(--sky);font-size:0.78rem;">' + url + '</a>' +
-        '</div>' +
-        '<div class="file-actions">' +
-          '<button class="btn btn-danger btn-small" onclick="deleteSailwaveLink(\'' + key + '\')">Remove</button>' +
-        '</div>' +
-      '</li>'
-    ).join('');
-  } catch(e) {
-    list.innerHTML = '<li class="empty-list" style="color:#ef4444;">Could not load links.</li>';
-  }
-}
-
-// ── SI PDF UPLOAD ───────────────────────────────────────────────
 function readFileAsText(file) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -667,45 +547,50 @@ function readFileAsText(file) {
   });
 }
 
-function updateSIBtn() {
-  const file = document.getElementById('si-file-input').files[0];
-  document.getElementById('si-upload-btn').disabled = !file;
-  document.getElementById('si-upload-filename').textContent = file ? file.name + ' (' + (file.size / 1024).toFixed(1) + ' KB)' : '';
+// ── RACE REPORT UPLOAD ──────────────────────────────────────────
+function updateReportBtn() {
+  const file = document.getElementById('report-file-input').files[0];
+  const date = document.getElementById('report-date').value;
+  document.getElementById('report-upload-btn').disabled = !file || !date;
+  document.getElementById('report-upload-filename').textContent = file
+    ? file.name + ' (' + (file.size / 1024).toFixed(1) + ' KB)'
+    : '';
 }
 
-async function uploadSI() {
-  const file = document.getElementById('si-file-input').files[0];
-  const year = document.getElementById('si-upload-year').value;
-  if (!file) return;
+async function uploadReport() {
+  const file = document.getElementById('report-file-input').files[0];
+  const date = document.getElementById('report-date').value;
+  if (!file || !date) return;
 
-  const key = 'SIs_' + year + '.pdf';
-  const btn = document.getElementById('si-upload-btn');
-  const s   = document.getElementById('si-upload-status');
+  const ext = file.name.endsWith('.docx') ? 'docx' : 'pdf';
+  const key = 'report_' + date + '.' + ext;
+  const btn = document.getElementById('report-upload-btn');
+  const s   = document.getElementById('report-upload-status');
 
   btn.disabled = true;
   btn.innerHTML = '<span class="spinner"></span> Uploading...';
 
   try {
-    // Read PDF as base64 data URL
     const base64 = await new Promise((resolve, reject) => {
       const reader = new FileReader();
-      reader.onload = e => resolve(e.target.result); // data:application/pdf;base64,...
+      reader.onload = e => resolve(e.target.result);
       reader.onerror = reject;
       reader.readAsDataURL(file);
     });
 
-    const res = await fetch(API + '/upload', {
+    const res = await fetch(API + '/upload-report', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'X-Admin-Password': sessionPassword },
+      headers: { 'Content-Type': 'application/json', 'X-Report-Password': reportPassword },
       body: JSON.stringify({ key, content: base64 })
     });
     const result = await res.json();
     if (res.ok) {
-      s.textContent = '✓ ' + key + ' uploaded. The Sailing Instructions page will now serve the new PDF.';
+      s.textContent = '✓ Report submitted for ' + date + '. It will appear on the site once approved by the Race Results admin.';
       s.className = 'status success visible';
-      document.getElementById('si-file-input').value = '';
-      document.getElementById('si-upload-filename').textContent = '';
-      loadFileList();
+      document.getElementById('report-file-input').value = '';
+      document.getElementById('report-date').value = '';
+      document.getElementById('report-upload-filename').textContent = '';
+      document.getElementById('report-upload-btn').disabled = true;
     } else {
       s.textContent = 'Upload failed: ' + (result.error || 'Unknown error');
       s.className = 'status error visible';
@@ -716,7 +601,94 @@ async function uploadSI() {
   }
 
   btn.disabled = false;
-  btn.innerHTML = 'Upload PDF';
+  btn.innerHTML = 'Submit Report';
+}
+
+// ── PENDING REPORTS (admin) ─────────────────────────────────────
+async function loadPendingReports() {
+  const list = document.getElementById('pending-reports-list');
+  const s    = document.getElementById('pending-reports-status');
+  list.innerHTML = '<li class="empty-list"><span class="spinner"></span> Loading...</li>';
+  try {
+    const res     = await fetch(API + '/reports?year=2026');
+    const reports = await res.json();
+    if (!reports.length) {
+      list.innerHTML = '<li class="empty-list">No reports submitted yet.</li>';
+      return;
+    }
+    list.innerHTML = reports.map(r => {
+      const uploaded = new Date(r.uploaded).toLocaleString('en-GB', {
+        day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit'
+      });
+      const kb         = (r.size / 1024).toFixed(1);
+      const dateMatch  = r.key.match(/report_(\d{4}-\d{2}-\d{2})/);
+      const dateLabel  = dateMatch ? dateMatch[1] : r.key;
+      const statusTag  = r.approved
+        ? '<span class="tag" style="background:rgba(34,197,94,0.15);color:#22c55e;">Approved</span>'
+        : '<span class="tag" style="background:rgba(240,165,0,0.15);color:var(--accent);">Pending</span>';
+      const approveBtn = r.approved
+        ? ''
+        : '<button class="btn btn-primary btn-small" onclick="approveReport(\'' + r.key + '\')">Approve</button>';
+      return '<li class="file-item">' +
+        '<div class="file-key">' + dateLabel + statusTag + '</div>' +
+        '<div class="file-meta">' + r.key.split('.').pop().toUpperCase() + ' · ' + kb + ' KB · ' + uploaded + '</div>' +
+        '<div class="file-actions">' + approveBtn +
+          '<a href="' + API + '/file/' + encodeURIComponent(r.key) + '" target="_blank" class="btn btn-ghost btn-small">View</a>' +
+          '<button class="btn btn-danger btn-small" onclick="deleteReport(\'' + r.key + '\')">Delete</button>' +
+        '</div>' +
+      '</li>';
+    }).join('');
+  } catch(e) {
+    list.innerHTML = '<li class="empty-list" style="color:#ef4444;">Could not load reports.</li>';
+  }
+}
+
+async function approveReport(key) {
+  const s = document.getElementById('pending-reports-status');
+  try {
+    const res = await fetch(API + '/approve-report', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-Admin-Password': sessionPassword },
+      body: JSON.stringify({ key })
+    });
+    const result = await res.json();
+    if (res.ok) {
+      s.textContent = '✓ ' + key + ' approved. Report button will now appear on the public site.';
+      s.className = 'status success visible';
+      loadPendingReports();
+      setTimeout(() => { s.className = 'status'; }, 4000);
+    } else {
+      s.textContent = 'Approval failed: ' + (result.error || 'Unknown error');
+      s.className = 'status error visible';
+    }
+  } catch(e) {
+    s.textContent = 'Approval failed: ' + e.message;
+    s.className = 'status error visible';
+  }
+}
+
+async function deleteReport(key) {
+  if (!confirm('Delete report ' + key + '? This cannot be undone.')) return;
+  const s = document.getElementById('pending-reports-status');
+  try {
+    const res = await fetch(API + '/file/' + encodeURIComponent(key), {
+      method: 'DELETE',
+      headers: { 'X-Admin-Password': sessionPassword }
+    });
+    const result = await res.json();
+    if (res.ok) {
+      s.textContent = '✓ ' + key + ' deleted.';
+      s.className = 'status success visible';
+      loadPendingReports();
+      setTimeout(() => { s.className = 'status'; }, 3000);
+    } else {
+      s.textContent = 'Delete failed: ' + (result.error || 'Unknown error');
+      s.className = 'status error visible';
+    }
+  } catch(e) {
+    s.textContent = 'Delete failed: ' + e.message;
+    s.className = 'status error visible';
+  }
 }
 </script>
 </body>

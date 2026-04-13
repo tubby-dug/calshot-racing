@@ -854,6 +854,24 @@
     } catch(e) {}
   }
 
+  // Approved race reports loaded once at startup — [{ key, date }, ...]
+  let approvedReports = [];
+  async function fetchApprovedReports() {
+    try {
+      const res = await fetch(API + '/approved-reports?year=' + YEAR);
+      if (res.ok) approvedReports = await res.json();
+    } catch(e) {}
+  }
+
+  function reportBtn(date) {
+    const report = approvedReports.find(r => r.date === date);
+    if (!report) return '';
+    const url = API + '/file/' + encodeURIComponent(report.key);
+    return '<a href="' + url + '" target="_blank" rel="noopener" class="pill-btn" ' +
+      'style="background:rgba(34,197,94,0.15);color:#22c55e;border:1px solid rgba(34,197,94,0.3);">' +
+      'Race Report ↗</a>';
+  }
+
   // ── SAILWAVE HTML PARSER ────────────────────────────────────────
   function parseSailwaveHTML(html) {
     const parser = new DOMParser();
@@ -1134,13 +1152,18 @@
                 const swBtn = swUrl
                   ? '<a href="' + swUrl + '" target="_blank" rel="noopener" class="pill-btn results" style="background:rgba(59,157,232,0.15);color:var(--sky);border:1px solid rgba(59,157,232,0.3);">Sailwave ↗</a>'
                   : '';
-                linksDiv.innerHTML = '<button class="pill-btn results" onclick="showEvening(\'' + ev.key + '\')">Results</button>' + swBtn;
+                const rptBtn = reportBtn(ev.date);
+                linksDiv.innerHTML = '<button class="pill-btn results" onclick="showEvening(\'' + ev.key + '\')">Results</button>' + swBtn + rptBtn;
               } else if (linksDiv && linksDiv.querySelector('.pill-btn.results')) {
-                // Results button already there — just append Sailwave if we have a link
+                // Results button already there — append Sailwave and report buttons if present
                 const linkKey = ev.key.replace('.html', '');
                 const swUrl = sailwaveLinks[linkKey];
                 if (swUrl && !linksDiv.querySelector('a[href="' + swUrl + '"]')) {
                   linksDiv.insertAdjacentHTML('beforeend', '<a href="' + swUrl + '" target="_blank" rel="noopener" class="pill-btn results" style="background:rgba(59,157,232,0.15);color:var(--sky);border:1px solid rgba(59,157,232,0.3);">Sailwave ↗</a>');
+                }
+                const rptBtn = reportBtn(ev.date);
+                if (rptBtn && !linksDiv.querySelector('a[style*="22c55e"]')) {
+                  linksDiv.insertAdjacentHTML('beforeend', rptBtn);
                 }
               }
             }
@@ -1334,7 +1357,7 @@
   }
 
   document.addEventListener("DOMContentLoaded", async () => {
-    await fetchSailwaveLinks();
+    await Promise.all([fetchSailwaveLinks(), fetchApprovedReports()]);
     loadHome();
   });
 </script>
