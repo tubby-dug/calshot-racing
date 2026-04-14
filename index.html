@@ -244,6 +244,7 @@
     .pos-badge.silver { background: #94a3b8; color: var(--navy); }
     .pos-badge.bronze { background: #b45309; color: white; }
     .discarded { opacity: 0.4; text-decoration: line-through; }
+    .discarded-score { text-decoration: line-through; }
     .score-chip {
       display: inline-block; padding: 0.15rem 0.5rem;
       border-radius: 4px; font-size: 0.8rem; font-weight: 600;
@@ -595,12 +596,6 @@
   </div>
 
   <div class="section">
-    <div class="tabs">
-      <button class="tab-btn active" onclick="showTab('2025-overall')">Overall</button>
-      <button class="tab-btn" onclick="showTab('2025-series1')">Series 1</button>
-      <button class="tab-btn" onclick="showTab('2025-series2')">Series 2</button>
-      <button class="tab-btn" onclick="showTab('2025-series3')">Series 3</button>
-    </div>
 
     <div id="tab-2025-overall" class="tab-panel active">
       <div class="card">
@@ -610,30 +605,7 @@
         </div>
       </div>
     </div>
-    <div id="tab-2025-series1" class="tab-panel">
-      <div class="card">
-        <div class="card-header"><span class="card-header-title">2025 Series 1</span><span id="sw-2025-series1"></span></div>
-        <div class="card-body" id="body-2025-series1">
-          <div class="loading"><div class="loading-spinner"></div><p>Loading...</p></div>
-        </div>
-      </div>
-    </div>
-    <div id="tab-2025-series2" class="tab-panel">
-      <div class="card">
-        <div class="card-header"><span class="card-header-title">2025 Series 2</span><span id="sw-2025-series2"></span></div>
-        <div class="card-body" id="body-2025-series2">
-          <div class="loading"><div class="loading-spinner"></div><p>Loading...</p></div>
-        </div>
-      </div>
-    </div>
-    <div id="tab-2025-series3" class="tab-panel">
-      <div class="card">
-        <div class="card-header"><span class="card-header-title">2025 Series 3</span><span id="sw-2025-series3"></span></div>
-        <div class="card-body" id="body-2025-series3">
-          <div class="loading"><div class="loading-spinner"></div><p>Loading...</p></div>
-        </div>
-      </div>
-    </div>
+
   </div>
 </div>
 
@@ -1036,7 +1008,7 @@
               else if (num === h.third)  bg = 'background:#8b4513;color:#fff;font-weight:700;';
             }
           }
-          html += '<td class="' + (r.discarded ? 'discarded' : '') + '" style="' + bg + '">' + r.score + '</td>';
+          html += '<td class="' + (r.discarded ? (bg ? 'discarded-score' : 'discarded') : '') + '" style="' + bg + '">' + r.score + '</td>';
         });
       }
       html += '<td><span class="score-chip nett">' + row.nett + '</span></td>';
@@ -1170,18 +1142,12 @@
 
   // ── LOAD 2025 PAGE ──────────────────────────────────────────────
   async function load2025() {
-    const types = ['series1','series2','series3','overall'];
-    for (const t of types) {
-      const bodyId = 'body-2025-' + t;
-      const el = document.getElementById(bodyId);
-      if (!el) continue;
-      el.innerHTML = '<div class="loading"><div class="loading-spinner"></div><p>Loading...</p></div>';
-      const linkKey = t + '_2025';
-      injectSailwaveBtn('sw-2025-' + t, linkKey);
-      const html = await fetchFile(t + '_2025.html');
-      if (html) el.innerHTML = renderResultsTable(parseSailwaveHTML(html), t !== 'overall');
-      else el.innerHTML = renderResultsTable(null, false);
-    }
+    const el = document.getElementById('body-2025-overall');
+    if (!el) return;
+    el.innerHTML = '<div class="loading"><div class="loading-spinner"></div><p>Loading...</p></div>';
+    injectSailwaveBtn('sw-2025-overall', 'overall_2025');
+    const html = await fetchFile('overall_2025.html');
+    el.innerHTML = html ? renderResultsTable(parseSailwaveHTML(html), false) : renderResultsTable(null, false);
   }
 
   // ── LOAD EVENINGS LIST ──────────────────────────────────────────
