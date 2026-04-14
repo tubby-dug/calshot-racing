@@ -969,7 +969,7 @@
       // Collect numeric scores for this race column
       const scores = rows.map(row => {
         const race = row.races[r];
-        if (!race || race.discarded || PENALTY_CODES.test(race.score)) return null;
+        if (!race || PENALTY_CODES.test(race.score)) return null;
         const num = parseFloat(race.score);
         return isNaN(num) ? null : num;
       });
@@ -1028,7 +1028,7 @@
         row.races.forEach((r, ri) => {
           const h = highlights[ri];
           let bg = '';
-          if (h && !r.discarded && !PENALTY_CODES.test(r.score)) {
+          if (h && !PENALTY_CODES.test(r.score)) {
             const num = parseFloat(r.score);
             if (!isNaN(num)) {
               if      (num === h.first)  bg = 'background:#b8860b;color:#fff;font-weight:700;';
