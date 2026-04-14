@@ -474,12 +474,16 @@ async function previewFile() {
   const thead = document.getElementById('preview-thead');
   const tbody = document.getElementById('preview-tbody');
   const maxShow = 5;
-  thead.innerHTML = '<tr><th>Pos</th><th>Name</th><th>Div</th>' +
-    data.raceHeaders.slice(0, maxShow).map(h => '<th>' + h.split(' ')[0] + '</th>').join('') +
+  thead.innerHTML = '<tr><th>Rank</th><th>Name</th>' +
+    data.raceHeaders.slice(0, maxShow).map(h => {
+      const m = h.trim().match(/^(R\d+?)\s*(\d{1,2})\/(\d{1,2})\/(\d{2,4})$/);
+      if (m) return '<th><strong>' + m[1] + '</strong> <small>' + m[2].padStart(2,'0') + '/' + m[3].padStart(2,'0') + '/' + m[4].slice(-2) + '</small></th>';
+      return '<th>' + h + '</th>';
+    }).join('') +
     (data.raceHeaders.length > maxShow ? '<th>+' + (data.raceHeaders.length - maxShow) + '</th>' : '') +
-    '<th>Nett</th></tr>';
+    '<th>Net</th></tr>';
   tbody.innerHTML = data.rows.map((row, i) =>
-    '<tr><td>' + (i+1) + '</td><td><strong>' + row.name + '</strong></td><td>' + row.division + '</td>' +
+    '<tr><td>' + row.rank + '</td><td><strong>' + row.name + '</strong></td>' +
     row.races.slice(0, maxShow).map(r =>
       '<td style="' + (r.discarded ? 'opacity:0.4;text-decoration:line-through' : '') + '">' + r.score + '</td>'
     ).join('') +
@@ -598,29 +602,45 @@ async function deleteFile(key) {
 
 function parseSailwave(html) {
   const parser = new DOMParser();
-  const doc = parser.parseFromString(html, 'text/html');
-  const caption = doc.querySelector('.summarycaption, .caption');
+  const doc    = parser.parseFromString(html, 'text/html');
+  const caption     = doc.querySelector('.summarycaption, .caption');
   const captionText = caption ? caption.textContent : '';
-  const sailed   = captionText.match(/Sailed:\s*(\d+)/)?.[1] || '?';
+  const sailed   = captionText.match(/Sailed:\s*(\d+)/)?.[1]   || '?';
   const discards = captionText.match(/Discards:\s*(\d+)/)?.[1] || '0';
-  const entries  = captionText.match(/Entries:\s*(\d+)/)?.[1] || '?';
+  const entries  = captionText.match(/Entries:\s*(\d+)/)?.[1]  || '?';
   const headerRow = doc.querySelector('.titlerow');
-  const headers = headerRow ? [...headerRow.querySelectorAll('th')].map(th => th.textContent.trim().replace(/\s+/g,' ')) : [];
-  const raceStartIdx = headers.findIndex(h => /^R\d+/.test(h));
-  const raceHeaders = headers.slice(raceStartIdx, headers.length - 2);
+  const headers   = headerRow
+    ? [...headerRow.querySelectorAll('th')].map(th => {
+        const raw = (th.firstChild && th.firstChild.nodeType === 3)
+          ? th.firstChild.textContent.trim()
+          : th.textContent.trim();
+        return raw;
+      })
+    : [];
+  const rankIdx      = headers.findIndex(h => /^Rank$/i.test(h));
+  const nameIdx      = headers.findIndex(h => /^HelmName$/i.test(h));
+  const divIdx       = headers.findIndex(h => /^Division$/i.test(h));
+  const totalIdx     = headers.findIndex(h => /^Total$/i.test(h));
+  const nettIdx      = headers.findIndex(h => /^Nett$/i.test(h));
+  const raceStartIdx = headers.findIndex(h => /^R\d+$/.test(h));
+  const raceEndIdx   = totalIdx > -1 ? totalIdx : nettIdx;
+  const raceHeaders  = (raceStartIdx > -1 && raceEndIdx > raceStartIdx)
+    ? headers.slice(raceStartIdx, raceEndIdx)
+    : [];
   const rows = [];
-  doc.querySelectorAll('.summaryrow').forEach(tr => {
+  doc.querySelectorAll('tr[class*="summaryrow"]').forEach(tr => {
     const cells = [...tr.querySelectorAll('td')];
     if (cells.length < 3) return;
-    const row = { name:cells[0].textContent.trim(), division:cells[1].textContent.trim(), sex:cells[2].textContent.trim(), races:[], total:'', nett:'' };
-    cells.forEach((td, i) => {
-      if (i < raceStartIdx) return;
-      const text = td.textContent.trim();
-      if (i === cells.length - 1) row.nett = text;
-      else if (i === cells.length - 2) row.total = text;
-      else row.races.push({ score: text.replace(/^\(|\)$/g,''), discarded: text.startsWith('(') });
-    });
-    rows.push(row);
+    const get = idx => idx > -1 && cells[idx] ? cells[idx].textContent.trim() : '';
+    const races = [];
+    if (raceStartIdx > -1 && raceEndIdx > raceStartIdx) {
+      for (let i = raceStartIdx; i < raceEndIdx; i++) {
+        if (!cells[i]) continue;
+        const text = cells[i].textContent.trim();
+        races.push({ score: text.replace(/^\(|\)$/g, ''), discarded: text.startsWith('(') });
+      }
+    }
+    rows.push({ rank: get(rankIdx), name: get(nameIdx), division: get(divIdx), races, total: get(totalIdx), nett: get(nettIdx) });
   });
   return { sailed, discards, entries, raceHeaders, rows };
 }

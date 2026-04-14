@@ -456,6 +456,7 @@
         <span class="card-header-title" id="home-series-title">Series Standings</span>
         <span class="badge" id="home-series-badge">Loading...</span>
         <span id="sw-home-series"></span>
+        <span id="full-results-series"></span>
       </div>
       <div class="card-body" id="home-series-body">
         <div class="loading"><div class="loading-spinner"></div><p>Loading standings...</p></div>
@@ -834,7 +835,7 @@
 </div>
 
 <footer>
-  <p>Calshot Activity Centre Staff Racing 2026 &nbsp;·&nbsp; Southampton Water</p>
+  <p>Calshot Activity Centre Staff Racing 2026 &nbsp;·&nbsp; Sailing Area A, Southampton Water</p>
   <p style="margin-top:0.4rem; font-size:0.72rem;">Results published after each evening · Questions to the Race Officer</p>
 </footer>
 
@@ -875,35 +876,84 @@
   // ── SAILWAVE HTML PARSER ────────────────────────────────────────
   function parseSailwaveHTML(html) {
     const parser = new DOMParser();
-    const doc = parser.parseFromString(html, 'text/html');
-    const caption = doc.querySelector('.summarycaption, .caption.summarycaption');
+    const doc    = parser.parseFromString(html, 'text/html');
+
+    // ── Metadata from caption ──────────────────────────────────────
+    const caption     = doc.querySelector('.summarycaption, .caption');
     const captionText = caption ? caption.textContent : '';
-    const sailed   = captionText.match(/Sailed:\s*(\d+)/)?.[1] || '?';
+    const sailed   = captionText.match(/Sailed:\s*(\d+)/)?.[1]   || '?';
     const discards = captionText.match(/Discards:\s*(\d+)/)?.[1] || '0';
-    const entries  = captionText.match(/Entries:\s*(\d+)/)?.[1] || '?';
-    const headerRow = doc.querySelector('.summarytable thead tr, .titlerow');
-    const headers = [];
-    if (headerRow) headerRow.querySelectorAll('th').forEach(th => {
-      headers.push(th.innerText || th.textContent);
-    });
-    const raceStartIdx = headers.findIndex(h => /^R\d+/.test(h.trim()));
+    const entries  = captionText.match(/Entries:\s*(\d+)/)?.[1]  || '?';
+
+    // ── Headers from titlerow ──────────────────────────────────────
+    // Use firstChild.textContent to get just the text before any <br> tag
+    const headerRow = doc.querySelector('.titlerow');
+    const headers   = [];
+    if (headerRow) {
+      headerRow.querySelectorAll('th').forEach(th => {
+        // firstChild is a text node — gives us "R1" without the date part
+        const raw = (th.firstChild && th.firstChild.nodeType === 3)
+          ? th.firstChild.textContent.trim()
+          : th.textContent.trim();
+        headers.push(raw);
+      });
+    }
+
+    // Map header names to column indices
+    const rankIdx     = headers.findIndex(h => /^Rank$/i.test(h));
+    const nameIdx     = headers.findIndex(h => /^HelmName$/i.test(h));
+    const divIdx      = headers.findIndex(h => /^Division$/i.test(h));
+    const totalIdx    = headers.findIndex(h => /^Total$/i.test(h));
+    const nettIdx     = headers.findIndex(h => /^Nett$/i.test(h));
+    const raceStartIdx = headers.findIndex(h => /^R\d+$/.test(h));
+    const raceEndIdx   = totalIdx > -1 ? totalIdx : nettIdx;
+    const raceHeaders  = (raceStartIdx > -1 && raceEndIdx > raceStartIdx)
+      ? headers.slice(raceStartIdx, raceEndIdx)
+      : [];
+
+    // ── Rows — match "odd summaryrow" and "even summaryrow" ────────
     const rows = [];
-    doc.querySelectorAll('.summaryrow').forEach(tr => {
+    doc.querySelectorAll('tr[class*="summaryrow"]').forEach(tr => {
       const cells = tr.querySelectorAll('td');
       if (cells.length < 3) return;
-      const row = { name:cells[0].textContent.trim(), division:cells[1].textContent.trim(), sex:cells[2].textContent.trim(), races:[], total:'', nett:'' };
-      cells.forEach((td, i) => {
-        if (i < raceStartIdx) return;
-        const text = td.textContent.trim();
-        const discarded = text.startsWith('(');
-        if (i === cells.length - 1) row.nett = text;
-        else if (i === cells.length - 2) row.total = text;
-        else row.races.push({ score: text.replace(/^\(|\)$/g,''), discarded });
+
+      const get = idx => idx > -1 && cells[idx] ? cells[idx].textContent.trim() : '';
+
+      // Race scores
+      const races = [];
+      if (raceStartIdx > -1 && raceEndIdx > raceStartIdx) {
+        for (let i = raceStartIdx; i < raceEndIdx; i++) {
+          if (!cells[i]) continue;
+          const text = cells[i].textContent.trim();
+          races.push({
+            score:     text.replace(/^\(|\)$/g, ''),
+            discarded: text.startsWith('('),
+          });
+        }
+      }
+
+      rows.push({
+        rank:     get(rankIdx),
+        name:     get(nameIdx),
+        division: get(divIdx),
+        races,
+        total:    get(totalIdx),
+        nett:     get(nettIdx),
       });
-      rows.push(row);
     });
-    const raceHeaders = headers.slice(raceStartIdx, headers.length - 2);
-    return { sailed, discards, entries, raceHeaders, rows, captionText };
+
+    // Also grab the full race headers with dates for column labels
+    const raceHeadersFull = [];
+    if (headerRow) {
+      const ths = headerRow.querySelectorAll('th');
+      if (raceStartIdx > -1 && raceEndIdx > raceStartIdx) {
+        for (let i = raceStartIdx; i < raceEndIdx; i++) {
+          raceHeadersFull.push(ths[i] ? ths[i].textContent.trim() : headers[i]);
+        }
+      }
+    }
+
+    return { sailed, discards, entries, raceHeaders: raceHeadersFull, rows, captionText };
   }
 
   // ── RACE COLUMN HIGHLIGHTING ────────────────────────────────────
@@ -950,33 +1000,30 @@
     }
     const highlights = compact ? [] : getRaceHighlights(data.rows);
     let html = '<div style="overflow-x:auto;">';
-    html += '<table class="results-table" style="' + (!compact ? 'min-width:600px;' : '') + '">';
-    html += '<thead><tr><th>Pos</th><th>Name</th><th>Div</th>';
+    html += '<table class="results-table" style="' + (!compact ? 'min-width:500px;' : '') + '">';
+    html += '<thead><tr><th>Rank</th><th>Name</th>';
     if (!compact) {
       data.raceHeaders.forEach(h => {
-        // Sailwave header is "R1 2/7/25" — textContent may collapse the space to "R12/7/25"
-        // Anchor on the date: find digits/digits/digits at the end, rest is race number
+        // Full textContent of the th including date after <br>: "R114/4/26"
         const m = h.trim().match(/^(R\d+?)\s*(\d{1,2})\/(\d{1,2})\/(\d{2,4})$/);
         if (m) {
-          const raceNum = m[1];
-          const day     = m[2].padStart(2, '0');
-          const month   = m[3].padStart(2, '0');
-          const year    = m[4].length === 2 ? m[4] : m[4].slice(-2);
-          html += '<th style="white-space:nowrap;"><strong>' + raceNum + '</strong><br/><small style="font-weight:400;letter-spacing:0;">' + day + '/' + month + '/' + year + '</small></th>';
+          const day   = m[2].padStart(2, '0');
+          const month = m[3].padStart(2, '0');
+          const year  = m[4].slice(-2);
+          html += '<th style="white-space:nowrap;"><strong>' + m[1] + '</strong><br/><small style="font-weight:400;letter-spacing:0;">' + day + '/' + month + '/' + year + '</small></th>';
         } else {
-          // Fallback: split on whitespace as before
-          const parts = h.trim().split(/\s+/);
-          html += '<th>' + parts[0] + (parts[1] ? '<br/><small>' + parts.slice(1).join(' ') + '</small>' : '') + '</th>';
+          html += '<th>' + h.trim() + '</th>';
         }
       });
     }
-    html += '<th>Nett</th></tr></thead><tbody>';
+    html += '<th>Net</th></tr></thead><tbody>';
 
     data.rows.forEach((row, i) => {
       const posClass = i===0?'gold':i===1?'silver':i===2?'bronze':'';
       html += '<tr>';
-      html += '<td><span class="pos-badge ' + posClass + '">' + (i+1) + '</span></td>';
-      html += '<td><strong>' + row.name + '</strong></td><td>' + row.division + '</td>';
+      // Use rank from Sailwave (1st, 2nd etc) but wrap in pos-badge for colour
+      html += '<td><span class="pos-badge ' + posClass + '" style="width:auto;padding:0 8px;border-radius:12px;font-size:0.8rem;">' + row.rank + '</span></td>';
+      html += '<td><strong>' + row.name + '</strong></td>';
       if (!compact) {
         row.races.forEach((r, ri) => {
           const h = highlights[ri];
@@ -984,12 +1031,12 @@
           if (h && !r.discarded && !PENALTY_CODES.test(r.score)) {
             const num = parseFloat(r.score);
             if (!isNaN(num)) {
-              if (num === h.first)  bg = 'background:#b8860b;color:#fff;font-weight:700;';
+              if      (num === h.first)  bg = 'background:#b8860b;color:#fff;font-weight:700;';
               else if (num === h.second) bg = 'background:#4a6fa5;color:#fff;font-weight:700;';
               else if (num === h.third)  bg = 'background:#8b4513;color:#fff;font-weight:700;';
             }
           }
-          html += '<td class="' + (r.discarded?'discarded':'') + '" style="' + bg + '">' + r.score + '</td>';
+          html += '<td class="' + (r.discarded ? 'discarded' : '') + '" style="' + bg + '">' + r.score + '</td>';
         });
       }
       html += '<td><span class="score-chip nett">' + row.nett + '</span></td>';
@@ -1051,7 +1098,12 @@
       document.getElementById('home-series-title').textContent = label + ' Standings';
       document.getElementById('home-series-badge').textContent = parsed.sailed + ' races sailed';
       injectSailwaveBtn('sw-home-series', currentKey + '_' + YEAR);
-      setHTML('home-series-body', renderResultsTable(parsed, true));
+      const frSlot = document.getElementById('full-results-series');
+      if (frSlot) frSlot.innerHTML = '<button onclick="showPage(\'results2026\');showTab(\'' + currentKey + '\')" ' +
+        'style="margin-left:0.5rem;padding:0.25rem 0.75rem;border-radius:6px;font-size:0.75rem;font-weight:700;' +
+        'letter-spacing:0.05em;text-transform:uppercase;background:var(--blue2);color:#fff;border:none;cursor:pointer;' +
+        'transition:background 0.15s;" onmouseover="this.style.background=\'var(--sky)\'" onmouseout="this.style.background=\'var(--blue2)\'">Full Results</button>';
+      setHTML('home-series-body', renderResultsTable(parsed, true, currentKey));
     } else {
       document.getElementById('home-series-badge').textContent = 'Not yet started';
       setHTML('home-series-body', '<div class="placeholder"><div class="placeholder-icon">📊</div><p>Series standings will appear here after the first evening.</p></div>');
