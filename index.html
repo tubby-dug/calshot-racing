@@ -92,7 +92,7 @@
       color: var(--white);
       font-family: var(--font-body);
       min-height: 100vh;
-      overflow-x: hidden;
+      overflow-x: clip;
     }
 
     /* ── NAV ─────────────────────────────────────────── */
@@ -199,7 +199,7 @@
     .card {
       background: var(--surface);
       border: 1px solid var(--border);
-      border-radius: 12px; overflow: hidden;
+      border-radius: 12px; overflow: visible;
       margin-bottom: 1rem;
     }
     .card-header {
@@ -370,8 +370,7 @@
     @media (max-width: 600px) {
       .nav-links li a { padding: 0 0.65rem; font-size: 0.72rem; }
       .section { padding: 1.5rem 1rem; }
-      .results-table th:nth-child(n+5),
-      .results-table td:nth-child(n+5) { display: none; }
+      .card-body { padding: 0.75rem; }
     }
 
     .theme-toggle {
@@ -971,7 +970,7 @@
       return '<div class="placeholder"><div class="placeholder-icon">⛵</div><p>No results yet — check back after the first racing evening.</p></div>';
     }
     const highlights = compact ? [] : getRaceHighlights(data.rows);
-    let html = '<div style="overflow-x:auto;">';
+    let html = '<div style="overflow-x:auto;overflow-y:visible;-webkit-overflow-scrolling:touch;width:100%;">';
     html += '<table class="results-table" style="' + (!compact ? 'min-width:500px;' : '') + '">';
     html += '<thead><tr><th>Rank</th><th>Name</th>';
     if (!compact) {
