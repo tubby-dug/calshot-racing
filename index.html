@@ -1296,28 +1296,36 @@
     canvas.style.display    = 'none';
     controls.style.display  = 'none';
 
-    // Try R2 first, fall back to repo-hosted file
-    const r2Url       = API + '/file/' + encodeURIComponent(SI_KEY);
-    const fallbackUrl = SI_FALLBACK;
+    // Fetch PDF from R2 as a blob — PDF.js needs a blob URL or array buffer,
+    // not a direct URL, to avoid CORS issues with the Worker endpoint
+    const r2Url = API + '/file/' + encodeURIComponent(SI_KEY);
 
-    let pdfUrl = null;
+    let pdfData = null;
     try {
-      const probe = await fetch(r2Url, { method: 'HEAD' });
-      pdfUrl = probe.ok ? r2Url : fallbackUrl;
-    } catch(e) {
-      pdfUrl = fallbackUrl;
+      const res = await fetch(r2Url);
+      if (res.ok) {
+        pdfData = await res.arrayBuffer();
+        dlBtn.href = URL.createObjectURL(new Blob([pdfData], { type: 'application/pdf' }));
+      }
+    } catch(e) {}
+
+    // If R2 fetch failed, show error
+    if (!pdfData) {
+      loadingEl.style.display = 'none';
+      errorEl.style.display   = 'block';
+      directLink.href = r2Url;
+      return;
     }
 
-    dlBtn.href = pdfUrl;
     dlBtn.setAttribute('download', SI_KEY);
-    directLink.href = pdfUrl;
+    directLink.href = r2Url;
 
     try {
       const pdfjsLib = window['pdfjs-dist/build/pdf'];
       pdfjsLib.GlobalWorkerOptions.workerSrc =
         'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
-      siPdfDoc = await pdfjsLib.getDocument(pdfUrl).promise;
+      siPdfDoc = await pdfjsLib.getDocument({ data: pdfData }).promise;
       siPageNum = 1;
 
       loadingEl.style.display = 'none';
